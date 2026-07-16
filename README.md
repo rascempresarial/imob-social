@@ -53,7 +53,13 @@ bloqueada, RLS ligado sem policies) · Deploy alvo: Vercel + GitHub.
 
 ## Deploy
 
-Este projeto ainda não tem repositório remoto nem projeto na Vercel — isso é
-feito à parte, com confirmação explícita, quando o time estiver pronto para
-publicar (`gh repo create` + `vercel` ou import direto pela UI da Vercel,
-configurando as mesmas 3 variáveis de ambiente do `.env.local`).
+Repositório: https://github.com/rascempresarial/imob-social (privado).
+
+Import direto pela UI da Vercel (New Project → Import Git Repository →
+`rascempresarial/imob-social`, framework Next.js detectado automaticamente).
+Configurar exatamente 3 variáveis de ambiente, iguais às do `.env.local`:
+`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SESSION_SECRET`.
+
+**Nunca configurar `DEV_BYPASS_AUTH` na Vercel** — essa variável existe só
+para uso local temporário (pula o login inteiro) e nunca deve ir para
+produção.
