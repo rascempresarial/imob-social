@@ -1,0 +1,130 @@
+-- Sistema de social media para imobiliária
+-- RLS: ligado em todas as tabelas, SEM policies. Só o service_role (usado no
+-- backend Next.js) consegue acessar. A anon key fica totalmente bloqueada.
+
+create extension if not exists "pgcrypto";
+
+create function set_updated_at() returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
+-- ── Login por chave de acesso ────────────────────────────────────────────
+create table access_keys (
+  id uuid primary key default gen_random_uuid(),
+  label text not null,
+  key text not null unique,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  last_used_at timestamptz
+);
+alter table access_keys enable row level security;
+
+-- ── Corretores ────────────────────────────────────────────────────────────
+create table corretores (
+  id uuid primary key default gen_random_uuid(),
+  nome text not null,
+  telefone text,
+  ativo boolean not null default true,
+  created_at timestamptz not null default now()
+);
+alter table corretores enable row level security;
+
+-- ── Imóveis ───────────────────────────────────────────────────────────────
+create type imovel_status as enum ('disponivel', 'reservado', 'vendido', 'alugado', 'indisponivel');
+
+create table imoveis (
+  id uuid primary key default gen_random_uuid(),
+  codigo text not null unique,
+  titulo text not null,
+  edificio text,
+  status imovel_status not null default 'disponivel',
+  endereco text,
+  valor numeric,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table imoveis enable row level security;
+
+create trigger imoveis_set_updated_at
+  before update on imoveis
+  for each row execute function set_updated_at();
+
+-- ── Posts (calendário editorial) ─────────────────────────────────────────
+create type post_tipo as enum ('feed', 'reels', 'story');
+create type post_status as enum ('rascunho', 'em_revisao', 'aprovado', 'reprovado', 'agendado', 'publicado');
+
+create table posts (
+  id uuid primary key default gen_random_uuid(),
+  imovel_id uuid references imoveis(id) on delete set null,
+  corretor_id uuid references corretores(id) on delete set null,
+  tipo post_tipo not null default 'feed',
+  link_criativo text,
+  copy text,
+  data_publicacao timestamptz,
+  anunciado boolean not null default false,
+  status post_status not null default 'rascunho',
+  aprovado_por text,
+  aprovado_em timestamptz,
+  motivo_reprovacao text,
+  alcance integer,
+  curtidas integer,
+  comentarios integer,
+  salvamentos integer,
+  created_by text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table posts enable row level security;
+
+create index posts_data_publicacao_idx on posts (data_publicacao);
+create index posts_imovel_id_idx on posts (imovel_id);
+create index posts_status_idx on posts (status);
+
+create trigger posts_set_updated_at
+  before update on posts
+  for each row execute function set_updated_at();
+
+-- ── Mídias (fotos/vídeos vinculados a imóvel e/ou post) ──────────────────
+create type midia_tipo as enum ('foto', 'video');
+
+create table midias (
+  id uuid primary key default gen_random_uuid(),
+  imovel_id uuid references imoveis(id) on delete cascade,
+  post_id uuid references posts(id) on delete set null,
+  tipo midia_tipo not null,
+  storage_path text not null,
+  nome_arquivo text,
+  created_at timestamptz not null default now()
+);
+alter table midias enable row level security;
+
+create index midias_imovel_id_idx on midias (imovel_id);
+
+-- ── Notas ─────────────────────────────────────────────────────────────────
+create table notas (
+  id uuid primary key default gen_random_uuid(),
+  titulo text,
+  conteudo text not null,
+  fixado boolean not null default false,
+  created_by text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table notas enable row level security;
+
+create trigger notas_set_updated_at
+  before update on notas
+  for each row execute function set_updated_at();
+
+-- ── Storage: bucket privado para mídia dos imóveis ───────────────────────
+-- Rode isso uma vez (ou crie o bucket pela UI do Supabase: Storage > New bucket,
+-- nome "midia-imoveis", marcado como privado / Public = false).
+insert into storage.buckets (id, name, public)
+values ('midia-imoveis', 'midia-imoveis', false)
+on conflict (id) do nothing;
+
+-- ── Seed opcional: cadastre sua primeira chave de acesso ─────────────────
+-- insert into access_keys (label, key) values ('Seu Nome', 'TROQUE-ESTA-CHAVE');
