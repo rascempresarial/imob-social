@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Imovel, Midia } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconImage } from "@/components/icons";
@@ -110,12 +111,17 @@ export default function MidiaPage() {
               Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-square" />)}
             {!loading && midias.map((m) => (
               <div key={m.id} className="rounded-lg border border-navy-100 bg-white overflow-hidden">
-                <div className="aspect-square bg-paper flex items-center justify-center">
+                <div className="relative aspect-square bg-paper flex items-center justify-center">
                   {m.tipo === "foto" && m.url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={m.url} alt={m.nome_arquivo ?? ""} className="w-full h-full object-cover" />
+                    <Image
+                      src={m.url}
+                      alt={m.nome_arquivo ?? ""}
+                      fill
+                      sizes="(min-width: 768px) 25vw, 50vw"
+                      className="object-cover"
+                    />
                   ) : m.tipo === "video" && m.url ? (
-                    <video src={m.url} className="w-full h-full object-cover" controls />
+                    <video src={m.url} className="w-full h-full object-cover" controls preload="metadata" />
                   ) : (
                     <span className="text-xs text-navy-400">sem preview</span>
                   )}

@@ -4,7 +4,7 @@ import { POST_STATUSES, postStatusMeta } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconEye, IconHeart, IconHome } from "@/components/icons";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 function ymd(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
