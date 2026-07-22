@@ -87,23 +87,12 @@ body {
   50% { transform: translate(-40px, -45px); }
 }
 
-.title-reveal {
-  opacity: 0;
-  animation: title-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.zigzag-pulse {
+  animation: zigzag-pulse 3.5s ease-in-out infinite;
 }
-@keyframes title-reveal {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.gold-underline {
-  height: 2px;
-  background: #c9a24b;
-  width: 0;
-  animation: gold-underline 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
-}
-@keyframes gold-underline {
-  to { width: 56px; }
+@keyframes zigzag-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .star {

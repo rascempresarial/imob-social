@@ -3,10 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Playfair_Display } from "next/font/google";
 import SkylineIllustration from "@/components/SkylineIllustration";
-
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600"] });
 
 export default function LoginPage() {
   const router = useRouter();
@@ -57,18 +54,14 @@ export default function LoginPage() {
         <div className="orb orb-b" />
         <SkylineIllustration />
         <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent" />
-
-        <div className="relative z-10 text-center px-10">
-          <h1 className={`${playfair.className} text-4xl text-white tracking-tight title-reveal`}>Gestão de redes e campanhas</h1>
-          <div className="gold-underline mx-auto mt-4" />
-        </div>
       </div>
 
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-paper px-6">
         <div className="w-full max-w-sm fade-in-delayed">
-          <div className="mb-8 flex justify-center">
+          <div className="mb-3 flex justify-center">
             <Image src="/pedro-granado-logo.png" alt="Pedro Granado Imóveis" width={280} height={64} priority className="h-14 w-auto" />
           </div>
+          <p className="text-center text-xs text-navy-400 mb-8">Chave de acesso para acessar a gestão de redes</p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-navy-800 mb-1">Chave de acesso</label>
