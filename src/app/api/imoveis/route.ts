@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
       status: body?.status || "disponivel",
       endereco: body?.endereco || null,
       valor: body?.valor ? Number(body.valor) : null,
+      link_site: body?.link_site || null,
     })
     .select()
     .single();

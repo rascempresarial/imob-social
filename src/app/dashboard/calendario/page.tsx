@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Post, postStatusMeta } from "@/lib/types";
+import { Post, postRedeMeta, postStatusMeta } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
-import { IconCalendar } from "@/components/icons";
+import { IconCalendar, IconExternalLink } from "@/components/icons";
 
 function ymd(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -155,7 +155,24 @@ export default function CalendarioPage() {
                         {meta.label}
                       </span>
                     </div>
-                    <div className="text-xs text-navy-500 capitalize">{p.tipo} · {p.corretor?.nome ?? "sem corretor"}</div>
+                    <div className="text-xs text-navy-500 capitalize">
+                      {p.tipo} · {postRedeMeta(p.rede).label}
+                    </div>
+                    <div className="flex items-center gap-3 mt-1.5 text-xs text-navy-500">
+                      <span>Anunciado: {p.anunciado ? "Sim" : "Não"}</span>
+                      {p.created_by && <span>Responsável: {p.created_by}</span>}
+                    </div>
+                    {p.link_criativo && (
+                      <a
+                        href={p.link_criativo}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-navy-700 hover:text-navy-900 underline mt-1.5"
+                      >
+                        <IconExternalLink className="w-3 h-3" />
+                        Ver criativo
+                      </a>
+                    )}
                     {p.copy && <p className="text-xs text-navy-600 mt-2 line-clamp-3">{p.copy}</p>}
                   </div>
                 );

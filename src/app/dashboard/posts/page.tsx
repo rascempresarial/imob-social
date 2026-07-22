@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Corretor, Imovel, Post, POST_STATUSES, PostStatus, postStatusMeta } from "@/lib/types";
+import { Imovel, Post, POST_REDES, POST_STATUSES, PostStatus, postRedeMeta, postStatusMeta } from "@/lib/types";
 import Badge from "@/components/Badge";
 import PostModal from "@/components/PostModal";
 import PageHeader from "@/components/PageHeader";
@@ -22,13 +22,12 @@ export default function PostsPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [imovelFilter, setImovelFilter] = useState("");
-  const [corretorFilter, setCorretorFilter] = useState("");
+  const [redeFilter, setRedeFilter] = useState("");
   const [fromFilter, setFromFilter] = useState("");
   const [toFilter, setToFilter] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [imoveis, setImoveis] = useState<Imovel[]>([]);
-  const [corretores, setCorretores] = useState<Corretor[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Post | null>(null);
   const confirmDialog = useConfirm();
@@ -38,7 +37,6 @@ export default function PostsPage() {
 
   useEffect(() => {
     fetch("/api/imoveis").then((r) => r.json()).then((d) => setImoveis(d.data ?? []));
-    fetch("/api/corretores").then((r) => r.json()).then((d) => setCorretores(d.data ?? []));
   }, []);
 
   useEffect(() => {
@@ -60,7 +58,7 @@ export default function PostsPage() {
     const params = new URLSearchParams();
     if (statusFilter) params.set("status", statusFilter);
     if (imovelFilter) params.set("imovel_id", imovelFilter);
-    if (corretorFilter) params.set("corretor_id", corretorFilter);
+    if (redeFilter) params.set("rede", redeFilter);
     if (fromFilter) params.set("from", new Date(fromFilter).toISOString());
     if (toFilter) params.set("to", new Date(toFilter + "T23:59:59").toISOString());
     if (search) params.set("q", search);
@@ -73,7 +71,7 @@ export default function PostsPage() {
     setPosts(data.data ?? []);
     setCount(data.count ?? 0);
     setLoading(false);
-  }, [statusFilter, imovelFilter, corretorFilter, fromFilter, toFilter, search, page, view]);
+  }, [statusFilter, imovelFilter, redeFilter, fromFilter, toFilter, search, page, view]);
 
   useEffect(() => {
     load();
@@ -84,11 +82,11 @@ export default function PostsPage() {
     setPage(1);
   }
 
-  const hasActiveFilters = !!(imovelFilter || corretorFilter || fromFilter || toFilter || search);
+  const hasActiveFilters = !!(imovelFilter || redeFilter || fromFilter || toFilter || search);
 
   function clearFilters() {
     setImovelFilter("");
-    setCorretorFilter("");
+    setRedeFilter("");
     setFromFilter("");
     setToFilter("");
     setSearchInput("");
@@ -211,17 +209,17 @@ export default function PostsPage() {
         </div>
         <div className="w-40 shrink-0">
           <select
-            value={corretorFilter}
+            value={redeFilter}
             onChange={(e) => {
-              setCorretorFilter(e.target.value);
+              setRedeFilter(e.target.value);
               setPage(1);
             }}
             className="inp py-1.5 text-xs"
           >
-            <option value="">Todos os corretores</option>
-            {corretores.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nome}
+            <option value="">Todas as redes</option>
+            {POST_REDES.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
               </option>
             ))}
           </select>
@@ -277,7 +275,7 @@ export default function PostsPage() {
                 <tr className="border-b border-navy-100 text-left text-navy-500">
                   <th className="px-4 py-3 font-medium">Imóvel</th>
                   <th className="px-4 py-3 font-medium">Edifício</th>
-                  <th className="px-4 py-3 font-medium">Corretor</th>
+                  <th className="px-4 py-3 font-medium">Rede</th>
                   <th className="px-4 py-3 font-medium">Tipo</th>
                   <th className="px-4 py-3 font-medium">Publicação</th>
                   <th className="px-4 py-3 font-medium">Anunciado</th>
@@ -312,7 +310,7 @@ export default function PostsPage() {
                           )}
                         </td>
                         <td className="px-4 py-3 text-navy-600">{p.imovel?.edificio ?? "·"}</td>
-                        <td className="px-4 py-3 text-navy-600">{p.corretor?.nome ?? "·"}</td>
+                        <td className="px-4 py-3 text-navy-600">{postRedeMeta(p.rede).label}</td>
                         <td className="px-4 py-3 text-navy-600 capitalize">{p.tipo}</td>
                         <td className="px-4 py-3 text-navy-600 whitespace-nowrap">
                           {p.data_publicacao

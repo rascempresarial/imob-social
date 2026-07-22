@@ -98,6 +98,14 @@ export default function ImovelModal({
             onChange={(e) => set("valor", e.target.value ? Number(e.target.value) : null)}
           />
         </Field>
+        <Field label="Link do imóvel no site">
+          <input
+            className="inp"
+            value={draft.link_site ?? ""}
+            onChange={(e) => set("link_site", e.target.value)}
+            placeholder="https://seusite.com.br/imoveis/ap-1023"
+          />
+        </Field>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <div className="flex justify-end gap-2 pt-2">
           <button type="button" onClick={onClose} className="px-4 py-2 text-sm rounded-lg text-navy-700 hover:bg-navy-100">

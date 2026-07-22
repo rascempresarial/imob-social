@@ -6,7 +6,7 @@ import { Imovel, imovelStatusMeta } from "@/lib/types";
 import Badge from "@/components/Badge";
 import ImovelModal from "@/components/ImovelModal";
 import PageHeader from "@/components/PageHeader";
-import { IconBuilding } from "@/components/icons";
+import { IconBuilding, IconExternalLink } from "@/components/icons";
 import { SkeletonTableRows } from "@/components/Skeleton";
 import Pagination from "@/components/Pagination";
 import { useConfirm, useToast } from "@/components/UIProvider";
@@ -106,7 +106,22 @@ export default function ImoveisPage() {
                 return (
                   <tr key={im.id} className="border-b border-navy-100 last:border-0">
                     <td className="px-4 py-3 font-mono text-xs text-navy-700">{im.codigo}</td>
-                    <td className="px-4 py-3 text-navy-900">{im.titulo}</td>
+                    <td className="px-4 py-3 text-navy-900">
+                      <span className="inline-flex items-center gap-1.5">
+                        {im.titulo}
+                        {im.link_site && (
+                          <a
+                            href={im.link_site}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-navy-400 hover:text-navy-800"
+                            title="Ver no site"
+                          >
+                            <IconExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-navy-600">{im.edificio ?? "·"}</td>
                     <td className="px-4 py-3">
                       <Badge label={meta.label} color={meta.color} />

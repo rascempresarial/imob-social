@@ -1,6 +1,7 @@
 export type ImovelStatus = "disponivel" | "reservado" | "vendido" | "alugado" | "indisponivel";
 export type PostTipo = "feed" | "reels" | "story";
 export type PostStatus = "rascunho" | "em_revisao" | "aprovado" | "reprovado" | "agendado" | "publicado";
+export type PostRede = "instagram_facebook" | "linkedin" | "youtube" | "blog";
 export type MidiaTipo = "foto" | "video";
 
 export interface AccessKey {
@@ -28,6 +29,7 @@ export interface Imovel {
   status: ImovelStatus;
   endereco: string | null;
   valor: number | null;
+  link_site: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -35,7 +37,7 @@ export interface Imovel {
 export interface Post {
   id: string;
   imovel_id: string | null;
-  corretor_id: string | null;
+  rede: PostRede;
   tipo: PostTipo;
   link_criativo: string | null;
   copy: string | null;
@@ -52,9 +54,8 @@ export interface Post {
   created_by: string | null;
   created_at: string;
   updated_at: string;
-  // preenchidos via join na listagem
+  // preenchido via join na listagem
   imovel?: Pick<Imovel, "id" | "codigo" | "titulo" | "edificio" | "status"> | null;
-  corretor?: Pick<Corretor, "id" | "nome"> | null;
 }
 
 export interface Midia {
@@ -118,6 +119,17 @@ export const POST_TIPOS: { value: PostTipo; label: string }[] = [
   { value: "reels", label: "Reels" },
   { value: "story", label: "Story" },
 ];
+
+export const POST_REDES: { value: PostRede; label: string }[] = [
+  { value: "instagram_facebook", label: "Instagram/Facebook" },
+  { value: "linkedin", label: "LinkedIn" },
+  { value: "youtube", label: "YouTube" },
+  { value: "blog", label: "Blog" },
+];
+
+export function postRedeMeta(value: string) {
+  return POST_REDES.find((r) => r.value === value) ?? POST_REDES[0];
+}
 
 export const POST_STATUSES: { value: PostStatus; label: string; color: string }[] = [
   { value: "rascunho", label: "Rascunho", color: "#6B7280" },

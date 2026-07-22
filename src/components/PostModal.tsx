@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import Field from "./Field";
-import { Corretor, Imovel, Post, POST_STATUSES, POST_TIPOS } from "@/lib/types";
+import { Imovel, Post, POST_REDES, POST_STATUSES, POST_TIPOS } from "@/lib/types";
 import { IconAlert, IconBookmark, IconComment, IconEye, IconHeart } from "./icons";
 import { useToast } from "./UIProvider";
 
@@ -26,16 +26,14 @@ export default function PostModal({
   onSaved: () => void;
 }) {
   const editing = !!initial;
-  const [draft, setDraft] = useState<Draft>(initial ?? { tipo: "feed", status: "rascunho", anunciado: false });
+  const [draft, setDraft] = useState<Draft>(initial ?? { tipo: "feed", rede: "instagram_facebook", status: "rascunho", anunciado: false });
   const [imoveis, setImoveis] = useState<Imovel[]>([]);
-  const [corretores, setCorretores] = useState<Corretor[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
 
   useEffect(() => {
     fetch("/api/imoveis").then((r) => r.json()).then((d) => setImoveis(d.data ?? []));
-    fetch("/api/corretores").then((r) => r.json()).then((d) => setCorretores((d.data ?? []).filter((c: Corretor) => c.ativo)));
   }, []);
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
@@ -88,12 +86,11 @@ export default function PostModal({
               ))}
             </select>
           </Field>
-          <Field label="Corretor">
-            <select className="inp" value={draft.corretor_id ?? ""} onChange={(e) => set("corretor_id", e.target.value || null)}>
-              <option value="">Selecione...</option>
-              {corretores.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome}
+          <Field label="Rede">
+            <select className="inp" value={draft.rede ?? "instagram_facebook"} onChange={(e) => set("rede", e.target.value as Post["rede"])}>
+              {POST_REDES.map((r) => (
+                <option key={r.value} value={r.value}>
+                  {r.label}
                 </option>
               ))}
             </select>

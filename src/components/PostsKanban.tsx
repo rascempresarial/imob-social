@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Post, POST_STATUSES, PostStatus } from "@/lib/types";
+import { Post, POST_STATUSES, PostStatus, postRedeMeta } from "@/lib/types";
 import { IconAlert, IconEye, IconGrip, IconHeart } from "./icons";
 
 export default function PostsKanban({
@@ -75,7 +75,7 @@ export default function PostsKanban({
                       <IconGrip className="w-3.5 h-3.5 text-navy-300 shrink-0 mt-0.5" />
                     </div>
                     <p className="text-xs text-navy-500 capitalize mt-1">
-                      {p.tipo} · {p.corretor?.nome ?? "sem corretor"}
+                      {p.tipo} · {postRedeMeta(p.rede).label}
                     </p>
                     {p.data_publicacao && (
                       <p className="text-[11px] text-navy-400 mt-1">

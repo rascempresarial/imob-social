@@ -3,10 +3,10 @@ import { getSession } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { logAudit } from "@/lib/audit";
 
-const SELECT = "*, imovel:imoveis(id, codigo, titulo, edificio, status), corretor:corretores(id, nome)";
+const SELECT = "*, imovel:imoveis(id, codigo, titulo, edificio, status)";
 const EDITABLE = [
   "imovel_id",
-  "corretor_id",
+  "rede",
   "tipo",
   "link_criativo",
   "copy",

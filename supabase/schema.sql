@@ -43,6 +43,7 @@ create table imoveis (
   status imovel_status not null default 'disponivel',
   endereco text,
   valor numeric,
+  link_site text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -55,11 +56,12 @@ create trigger imoveis_set_updated_at
 -- ── Posts (calendário editorial) ─────────────────────────────────────────
 create type post_tipo as enum ('feed', 'reels', 'story');
 create type post_status as enum ('rascunho', 'em_revisao', 'aprovado', 'reprovado', 'agendado', 'publicado');
+create type post_rede as enum ('instagram_facebook', 'linkedin', 'youtube', 'blog');
 
 create table posts (
   id uuid primary key default gen_random_uuid(),
   imovel_id uuid references imoveis(id) on delete set null,
-  corretor_id uuid references corretores(id) on delete set null,
+  rede post_rede not null default 'instagram_facebook',
   tipo post_tipo not null default 'feed',
   link_criativo text,
   copy text,
