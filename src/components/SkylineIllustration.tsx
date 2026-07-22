@@ -33,9 +33,6 @@ export default function SkylineIllustration() {
       className="absolute inset-0 w-full h-full"
       aria-hidden="true"
     >
-      <circle cx={300} cy={64} r={26} fill="none" stroke={GOLD} strokeWidth={0.75} opacity={0.5} />
-      <circle cx={300} cy={64} r={1.5} fill={GOLD} opacity={0.7} />
-
       {[
         [40, 30],
         [130, 46],

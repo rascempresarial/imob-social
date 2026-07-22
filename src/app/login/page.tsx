@@ -3,7 +3,10 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Playfair_Display } from "next/font/google";
 import SkylineIllustration from "@/components/SkylineIllustration";
+
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600"] });
 
 export default function LoginPage() {
   const router = useRouter();
@@ -56,9 +59,8 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent" />
 
         <div className="relative z-10 text-center px-10">
-          <h1 className="text-3xl font-semibold text-white tracking-tight title-reveal">Gestão de redes</h1>
-          <div className="gold-underline mx-auto mt-3" />
-          <p className="text-white/50 text-sm mt-3 fade-in-delayed">Gestão de rede e anúncios</p>
+          <h1 className={`${playfair.className} text-4xl text-white tracking-tight title-reveal`}>Gestão de redes e campanhas</h1>
+          <div className="gold-underline mx-auto mt-4" />
         </div>
       </div>
 
