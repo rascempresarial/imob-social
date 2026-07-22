@@ -5,15 +5,19 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   IconBuilding,
   IconCalendar,
+  IconGlobe,
   IconHistory,
   IconHome,
   IconImage,
+  IconInstagram,
   IconKey,
   IconLayers,
+  IconLinkedin,
   IconLogout,
   IconNote,
   IconSearch,
   IconUsers,
+  IconYoutube,
 } from "./icons";
 
 const NAV = [
@@ -32,6 +36,13 @@ const CADASTROS = [
 const ADMIN = [
   { href: "/dashboard/chaves", label: "Chaves de acesso", icon: IconKey },
   { href: "/dashboard/auditoria", label: "Auditoria", icon: IconHistory },
+];
+
+const SOCIAL_LINKS = [
+  { href: "https://www.instagram.com/pedrogranadoimoveis", label: "Instagram", icon: IconInstagram },
+  { href: "https://www.youtube.com/user/pedrogranadoimoveis", label: "YouTube", icon: IconYoutube },
+  { href: "https://br.linkedin.com/company/pedrogranadoimoveis", label: "LinkedIn", icon: IconLinkedin },
+  { href: "https://www.pedrogranado.com.br/", label: "Site", icon: IconGlobe },
 ];
 
 function NavLink({ href, label, icon: Icon, active }: { href: string; label: string; icon: typeof IconHome; active: boolean }) {
@@ -76,7 +87,7 @@ export default function Sidebar({ label }: { label: string }) {
           <span className="ml-auto text-[10px] border border-white/15 rounded px-1.5 py-0.5">⌘K</span>
         </button>
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 flex flex-col px-3 py-4 space-y-1 overflow-y-auto">
         {NAV.map((item) => (
           <NavLink key={item.href} {...item} active={!!isActive(item.href)} />
         ))}
@@ -93,6 +104,21 @@ export default function Sidebar({ label }: { label: string }) {
         <div className="pt-4 mt-3 border-t border-white/10 space-y-1">
           {ADMIN.map((item) => (
             <NavLink key={item.href} {...item} active={!!isActive(item.href)} />
+          ))}
+        </div>
+
+        <div className="mt-auto flex items-center gap-3 px-3 pt-4">
+          {SOCIAL_LINKS.map((s) => (
+            <a
+              key={s.href}
+              href={s.href}
+              target="_blank"
+              rel="noreferrer"
+              title={s.label}
+              className="text-white/40 hover:text-white transition-colors"
+            >
+              <s.icon className="w-4 h-4" />
+            </a>
           ))}
         </div>
       </nav>
