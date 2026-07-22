@@ -28,22 +28,24 @@ body {
   background: #a9b6cf;
 }
 
-.inp {
-  width: 100%;
-  border-radius: 0.5rem;
-  border: 1px solid #d7deea;
-  background: #ffffff;
-  color: #0a1830;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-.inp::placeholder {
-  color: #8b96ad;
-}
-.inp:focus {
-  border-color: #173262;
+@layer components {
+  .inp {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #d7deea;
+    background: #ffffff;
+    color: #0a1830;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .inp::placeholder {
+    color: #8b96ad;
+  }
+  .inp:focus {
+    border-color: #173262;
+  }
 }
 
 .spotlight {

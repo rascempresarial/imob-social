@@ -40,8 +40,8 @@ const ADMIN = [
 
 const SOCIAL_LINKS = [
   { href: "https://www.instagram.com/pedrogranadoimoveis", label: "Instagram", icon: IconInstagram },
-  { href: "https://www.youtube.com/user/pedrogranadoimoveis", label: "YouTube", icon: IconYoutube },
   { href: "https://br.linkedin.com/company/pedrogranadoimoveis", label: "LinkedIn", icon: IconLinkedin },
+  { href: "https://www.youtube.com/user/pedrogranadoimoveis", label: "YouTube", icon: IconYoutube },
   { href: "https://www.pedrogranado.com.br/", label: "Site", icon: IconGlobe },
 ];
 
@@ -107,7 +107,9 @@ export default function Sidebar({ label }: { label: string }) {
           ))}
         </div>
 
-        <div className="mt-auto flex items-center gap-3 px-3 pt-4">
+      </nav>
+      <div className="px-3 py-4 border-t border-white/10">
+        <div className="flex items-center justify-center gap-4 mb-4">
           {SOCIAL_LINKS.map((s) => (
             <a
               key={s.href}
@@ -117,12 +119,10 @@ export default function Sidebar({ label }: { label: string }) {
               title={s.label}
               className="text-white/40 hover:text-white transition-colors"
             >
-              <s.icon className="w-4 h-4" />
+              <s.icon className="w-[18px] h-[18px]" />
             </a>
           ))}
         </div>
-      </nav>
-      <div className="px-3 py-4 border-t border-white/10">
         <div className="flex items-center gap-2 px-3 mb-2">
           <span className="pulse-dot" />
           <p className="text-xs text-white/40 truncate">{label}</p>
