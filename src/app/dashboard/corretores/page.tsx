@@ -5,6 +5,7 @@ import { Corretor } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconUsers } from "@/components/icons";
 import { SkeletonTableRows } from "@/components/Skeleton";
+import { useConfirm, useToast } from "@/components/UIProvider";
 
 export default function CorretoresPage() {
   const [corretores, setCorretores] = useState<Corretor[]>([]);
@@ -12,6 +13,8 @@ export default function CorretoresPage() {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [saving, setSaving] = useState(false);
+  const confirmDialog = useConfirm();
+  const toast = useToast();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -37,6 +40,7 @@ export default function CorretoresPage() {
       });
       setNome("");
       setTelefone("");
+      toast("Corretor adicionado.", "success");
       load();
     } finally {
       setSaving(false);
@@ -53,8 +57,15 @@ export default function CorretoresPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Excluir este corretor? Posts vinculados ficarão sem corretor associado.")) return;
+    const ok = await confirmDialog({
+      title: "Excluir corretor",
+      message: "Excluir este corretor? Posts vinculados ficarão sem corretor associado.",
+      confirmLabel: "Excluir",
+      danger: true,
+    });
+    if (!ok) return;
     await fetch(`/api/corretores/${id}`, { method: "DELETE" });
+    toast("Corretor excluído.", "success");
     load();
   }
 

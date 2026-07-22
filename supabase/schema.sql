@@ -119,6 +119,19 @@ create trigger notas_set_updated_at
   before update on notas
   for each row execute function set_updated_at();
 
+-- ── Log de auditoria (histórico de ações em posts) ───────────────────────
+create table audit_log (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid references posts(id) on delete set null,
+  actor text not null,
+  action text not null,
+  detail text,
+  created_at timestamptz not null default now()
+);
+alter table audit_log enable row level security;
+
+create index audit_log_created_at_idx on audit_log (created_at desc);
+
 -- ── Storage: bucket privado para mídia dos imóveis ───────────────────────
 -- Rode isso uma vez (ou crie o bucket pela UI do Supabase: Storage > New bucket,
 -- nome "midia-imoveis", marcado como privado / Public = false).

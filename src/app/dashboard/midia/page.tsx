@@ -5,6 +5,7 @@ import { Imovel, Midia } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconImage } from "@/components/icons";
 import { Skeleton } from "@/components/Skeleton";
+import { useConfirm, useToast } from "@/components/UIProvider";
 
 export default function MidiaPage() {
   const [imoveis, setImoveis] = useState<Imovel[]>([]);
@@ -14,6 +15,8 @@ export default function MidiaPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const confirmDialog = useConfirm();
+  const toast = useToast();
 
   useEffect(() => {
     fetch("/api/imoveis").then((r) => r.json()).then((d) => setImoveis(d.data ?? []));
@@ -55,6 +58,7 @@ export default function MidiaPage() {
         return;
       }
       if (fileRef.current) fileRef.current.value = "";
+      toast("Mídia enviada.", "success");
       load();
     } finally {
       setUploading(false);
@@ -62,8 +66,10 @@ export default function MidiaPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Excluir esta mídia?")) return;
+    const ok = await confirmDialog({ title: "Excluir mídia", message: "Excluir esta mídia?", confirmLabel: "Excluir", danger: true });
+    if (!ok) return;
     await fetch(`/api/midias/${id}`, { method: "DELETE" });
+    toast("Mídia excluída.", "success");
     load();
   }
 

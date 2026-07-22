@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import SkylineIllustration from "@/components/SkylineIllustration";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,59 +43,67 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      onMouseMove={handleMouseMove}
-      className="relative min-h-screen overflow-hidden bg-navy-900 flex items-center justify-center px-4"
-    >
-      <div ref={spotlightRef} className="spotlight" />
-      <div className="orb orb-a" />
-      <div className="orb orb-b" />
+    <div className="min-h-screen flex">
+      <div
+        onMouseMove={handleMouseMove}
+        className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-navy-900 items-center justify-center"
+      >
+        <div ref={spotlightRef} className="spotlight" />
+        <div className="orb orb-a" />
+        <div className="orb orb-b" />
+        <SkylineIllustration />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent" />
 
-      <div className="w-full max-w-sm relative z-10">
-        <div className="text-center mb-8">
+        <div className="relative z-10 text-center px-10">
           <h1 className="text-3xl font-semibold text-white tracking-tight">
-            <span className="typewriter">Social Media</span>
+            <span className="typewriter">Gestão de redes</span>
           </h1>
           <p className="text-white/50 text-sm mt-3 fade-in-delayed">Gestão de rede e anúncios</p>
         </div>
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-xl border border-navy-700/20 shadow-xl p-6 space-y-4 fade-in-delayed"
-        >
-          <div>
-            <label className="block text-xs font-medium text-navy-800 mb-1">Chave de acesso</label>
-            <div className="relative">
-              <input
-                type={showKey ? "text" : "password"}
-                autoFocus
-                autoComplete="one-time-code"
-                autoCorrect="off"
-                autoCapitalize="off"
-                spellCheck={false}
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-                placeholder="XXX-XXX-XXX"
-                className="inp pr-16"
-              />
-              <button
-                type="button"
-                onClick={() => setShowKey((v) => !v)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-navy-500 hover:text-navy-800 px-2 py-1"
-                tabIndex={-1}
-              >
-                {showKey ? "ocultar" : "mostrar"}
-              </button>
-            </div>
+      </div>
+
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-paper px-6">
+        <div className="w-full max-w-sm fade-in-delayed">
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold text-navy-900 tracking-tight">Entrar</h2>
+            <p className="text-navy-500 text-sm mt-1">Use sua chave de acesso pessoal</p>
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading || !key}
-            className="w-full rounded-lg bg-navy-800 text-white py-2 text-sm font-medium hover:bg-navy-700 disabled:opacity-50 transition-colors"
-          >
-            {loading ? "Entrando..." : "Entrar"}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-navy-800 mb-1">Chave de acesso</label>
+              <div className="relative">
+                <input
+                  type={showKey ? "text" : "password"}
+                  autoFocus
+                  autoComplete="one-time-code"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  value={key}
+                  onChange={(e) => setKey(e.target.value)}
+                  placeholder="XXX-XXX-XXX"
+                  className="inp pr-16"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowKey((v) => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-navy-500 hover:text-navy-800 px-2 py-1"
+                  tabIndex={-1}
+                >
+                  {showKey ? "ocultar" : "mostrar"}
+                </button>
+              </div>
+            </div>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <button
+              type="submit"
+              disabled={loading || !key}
+              className="w-full rounded-lg bg-navy-800 text-white py-2.5 text-sm font-medium hover:bg-navy-700 disabled:opacity-50 transition-colors"
+            >
+              {loading ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

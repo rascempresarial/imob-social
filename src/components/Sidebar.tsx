@@ -5,12 +5,14 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   IconBuilding,
   IconCalendar,
+  IconHistory,
   IconHome,
   IconImage,
   IconKey,
   IconLayers,
   IconLogout,
   IconNote,
+  IconSearch,
   IconUsers,
 } from "./icons";
 
@@ -27,7 +29,10 @@ const CADASTROS = [
   { href: "/dashboard/corretores", label: "Corretores", icon: IconUsers },
 ];
 
-const ADMIN = [{ href: "/dashboard/chaves", label: "Chaves de acesso", icon: IconKey }];
+const ADMIN = [
+  { href: "/dashboard/chaves", label: "Chaves de acesso", icon: IconKey },
+  { href: "/dashboard/auditoria", label: "Auditoria", icon: IconHistory },
+];
 
 function NavLink({ href, label, icon: Icon, active }: { href: string; label: string; icon: typeof IconHome; active: boolean }) {
   return (
@@ -60,6 +65,16 @@ export default function Sidebar({ label }: { label: string }) {
     <aside className="w-60 shrink-0 bg-navy-800 min-h-screen flex flex-col">
       <div className="px-5 py-6 border-b border-white/10">
         <span className="text-white font-semibold tracking-tight text-lg">Gestão de redes</span>
+      </div>
+      <div className="px-3 pt-4">
+        <button
+          onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
+          className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/50 border border-white/10 hover:bg-white/10 hover:text-white transition-colors"
+        >
+          <IconSearch className="w-[16px] h-[16px] shrink-0" />
+          Buscar
+          <span className="ml-auto text-[10px] border border-white/15 rounded px-1.5 py-0.5">⌘K</span>
+        </button>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {NAV.map((item) => (

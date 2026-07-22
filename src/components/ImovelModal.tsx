@@ -4,6 +4,7 @@ import { useState } from "react";
 import Modal from "./Modal";
 import Field from "./Field";
 import { Imovel, IMOVEL_STATUSES } from "@/lib/types";
+import { useToast } from "./UIProvider";
 
 type Draft = Partial<Imovel>;
 
@@ -20,6 +21,7 @@ export default function ImovelModal({
   const [draft, setDraft] = useState<Draft>(initial ?? { status: "disponivel" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -42,6 +44,7 @@ export default function ImovelModal({
         setError(data.error ?? "Erro ao salvar.");
         return;
       }
+      toast(editing ? "Imóvel atualizado." : "Imóvel criado.", "success");
       onSaved();
       onClose();
     } finally {

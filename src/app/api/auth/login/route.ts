@@ -10,12 +10,15 @@ export async function POST(req: NextRequest) {
   }
 
   const supabase = getSupabaseAdmin();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("access_keys")
     .select("id, label, active")
     .eq("key", key)
     .maybeSingle();
 
+  if (error) {
+    return NextResponse.json({ error: `Erro ao conectar com o banco de dados: ${error.message}` }, { status: 500 });
+  }
   if (!data || !data.active) {
     return NextResponse.json({ error: "Chave inválida ou desativada." }, { status: 401 });
   }

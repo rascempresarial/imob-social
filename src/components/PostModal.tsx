@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import Field from "./Field";
 import { Corretor, Imovel, Post, POST_STATUSES, POST_TIPOS } from "@/lib/types";
 import { IconAlert, IconBookmark, IconComment, IconEye, IconHeart } from "./icons";
+import { useToast } from "./UIProvider";
 
 type Draft = Partial<Post>;
 
@@ -30,6 +31,7 @@ export default function PostModal({
   const [corretores, setCorretores] = useState<Corretor[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     fetch("/api/imoveis").then((r) => r.json()).then((d) => setImoveis(d.data ?? []));
@@ -64,6 +66,7 @@ export default function PostModal({
         setError(data.error ?? "Erro ao salvar.");
         return;
       }
+      toast(editing ? "Post atualizado." : "Post criado.", "success");
       onSaved();
       onClose();
     } finally {

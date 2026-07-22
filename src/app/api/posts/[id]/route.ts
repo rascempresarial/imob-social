@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { logAudit } from "@/lib/audit";
 
 const SELECT = "*, imovel:imoveis(id, codigo, titulo, edificio, status), corretor:corretores(id, nome)";
 const EDITABLE = [
@@ -41,12 +42,33 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   const { data, error } = await getSupabaseAdmin().from("posts").update(update).eq("id", params.id).select(SELECT).single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (update.status === "aprovado") {
+    await logAudit({ postId: data.id, actor: session.label, action: "aprovado" });
+  } else if (update.status === "reprovado") {
+    await logAudit({ postId: data.id, actor: session.label, action: "reprovado", detail: data.motivo_reprovacao });
+  } else {
+    await logAudit({ postId: data.id, actor: session.label, action: "editado" });
+  }
+
   return NextResponse.json({ data });
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+
+  const supabase = getSupabaseAdmin();
+  const { data: post } = await supabase.from("posts").select(SELECT).eq("id", params.id).maybeSingle();
+
+  if (post) {
+    await logAudit({
+      postId: post.id,
+      actor: session.label,
+      action: "excluido",
+      detail: `Post excluído (${post.tipo}), imóvel ${post.imovel?.codigo ?? "não vinculado"}`,
+    });
+  }
 
   const { error } = await getSupabaseAdmin().from("posts").delete().eq("id", params.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

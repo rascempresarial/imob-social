@@ -5,6 +5,7 @@ import { AccessKey } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconKey } from "@/components/icons";
 import { SkeletonTableRows } from "@/components/Skeleton";
+import { useConfirm, useToast } from "@/components/UIProvider";
 
 export default function ChavesPage() {
   const [keys, setKeys] = useState<AccessKey[]>([]);
@@ -14,6 +15,8 @@ export default function ChavesPage() {
   const [error, setError] = useState<string | null>(null);
   const [justCreated, setJustCreated] = useState<AccessKey | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const confirmDialog = useConfirm();
+  const toast = useToast();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -61,13 +64,20 @@ export default function ChavesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Excluir esta chave? A pessoa não vai mais conseguir entrar com ela.")) return;
+    const ok = await confirmDialog({
+      title: "Excluir chave",
+      message: "Excluir esta chave? A pessoa não vai mais conseguir entrar com ela.",
+      confirmLabel: "Excluir",
+      danger: true,
+    });
+    if (!ok) return;
     const res = await fetch(`/api/access-keys/${id}`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) {
-      alert(data.error ?? "Erro ao excluir.");
+      toast(data.error ?? "Erro ao excluir.", "error");
       return;
     }
+    toast("Chave excluída.", "success");
     load();
   }
 

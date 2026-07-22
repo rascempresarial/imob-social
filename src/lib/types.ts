@@ -78,6 +78,29 @@ export interface Nota {
   updated_at: string;
 }
 
+export type AuditAction = "criado" | "editado" | "aprovado" | "reprovado" | "excluido";
+
+export interface AuditLog {
+  id: string;
+  post_id: string | null;
+  actor: string;
+  action: AuditAction;
+  detail: string | null;
+  created_at: string;
+}
+
+export const AUDIT_ACTIONS: { value: AuditAction; label: string; color: string }[] = [
+  { value: "criado", label: "Criado", color: "#2C5AA0" },
+  { value: "editado", label: "Editado", color: "#6B7280" },
+  { value: "aprovado", label: "Aprovado", color: "#1B8A5A" },
+  { value: "reprovado", label: "Reprovado", color: "#B3261E" },
+  { value: "excluido", label: "Excluído", color: "#B3261E" },
+];
+
+export function auditActionMeta(value: string) {
+  return AUDIT_ACTIONS.find((a) => a.value === value) ?? AUDIT_ACTIONS[0];
+}
+
 export const IMOVEL_STATUSES: { value: ImovelStatus; label: string; color: string }[] = [
   { value: "disponivel", label: "Disponível", color: "#1B8A5A" },
   { value: "reservado", label: "Reservado", color: "#B98900" },

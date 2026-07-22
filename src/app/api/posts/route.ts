@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { logAudit } from "@/lib/audit";
 
 const SELECT = "*, imovel:imoveis(id, codigo, titulo, edificio, status), corretor:corretores(id, nome)";
 
@@ -12,6 +13,9 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get("status");
   const from = searchParams.get("from");
   const to = searchParams.get("to");
+  const imovelId = searchParams.get("imovel_id");
+  const corretorId = searchParams.get("corretor_id");
+  const q = searchParams.get("q");
   const page = searchParams.get("page") ? Number(searchParams.get("page")) : null;
   const pageSize = Number(searchParams.get("pageSize") || 20);
 
@@ -23,6 +27,9 @@ export async function GET(req: NextRequest) {
   if (status) query = query.eq("status", status);
   if (from) query = query.gte("data_publicacao", from);
   if (to) query = query.lte("data_publicacao", to);
+  if (imovelId) query = query.eq("imovel_id", imovelId);
+  if (corretorId) query = query.eq("corretor_id", corretorId);
+  if (q) query = query.ilike("copy", `%${q}%`);
   if (page) {
     const start = (page - 1) * pageSize;
     query = query.range(start, start + pageSize - 1);
@@ -57,5 +64,13 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await logAudit({
+    postId: data.id,
+    actor: session.label,
+    action: "criado",
+    detail: `Post criado (${data.tipo}), imóvel ${data.imovel?.codigo ?? "não vinculado"}`,
+  });
+
   return NextResponse.json({ data });
 }

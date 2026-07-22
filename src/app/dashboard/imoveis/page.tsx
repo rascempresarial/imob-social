@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Imovel, imovelStatusMeta } from "@/lib/types";
 import Badge from "@/components/Badge";
 import ImovelModal from "@/components/ImovelModal";
@@ -8,6 +9,7 @@ import PageHeader from "@/components/PageHeader";
 import { IconBuilding } from "@/components/icons";
 import { SkeletonTableRows } from "@/components/Skeleton";
 import Pagination from "@/components/Pagination";
+import { useConfirm, useToast } from "@/components/UIProvider";
 
 const PAGE_SIZE = 20;
 
@@ -18,6 +20,19 @@ export default function ImoveisPage() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Imovel | null>(null);
+  const confirmDialog = useConfirm();
+  const toast = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("action") === "new") {
+      setEditing(null);
+      setModalOpen(true);
+      router.replace("/dashboard/imoveis");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -33,8 +48,15 @@ export default function ImoveisPage() {
   }, [load]);
 
   async function handleDelete(id: string) {
-    if (!confirm("Excluir este imóvel? Posts vinculados ficarão sem imóvel associado.")) return;
+    const ok = await confirmDialog({
+      title: "Excluir imóvel",
+      message: "Excluir este imóvel? Posts vinculados ficarão sem imóvel associado.",
+      confirmLabel: "Excluir",
+      danger: true,
+    });
+    if (!ok) return;
     await fetch(`/api/imoveis/${id}`, { method: "DELETE" });
+    toast("Imóvel excluído.", "success");
     load();
   }
 

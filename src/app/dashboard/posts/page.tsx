@@ -1,14 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Post, POST_STATUSES, PostStatus, postStatusMeta } from "@/lib/types";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Corretor, Imovel, Post, POST_STATUSES, PostStatus, postStatusMeta } from "@/lib/types";
 import Badge from "@/components/Badge";
 import PostModal from "@/components/PostModal";
 import PageHeader from "@/components/PageHeader";
 import PostsKanban from "@/components/PostsKanban";
 import Pagination from "@/components/Pagination";
 import { SkeletonTableRows } from "@/components/Skeleton";
-import { IconAlert, IconEye, IconHeart, IconKanban, IconLayers, IconTable } from "@/components/icons";
+import { IconAlert, IconEye, IconHeart, IconKanban, IconLayers, IconSearch, IconTable } from "@/components/icons";
+import { useConfirm, useToast } from "@/components/UIProvider";
 
 const PAGE_SIZE = 20;
 
@@ -19,13 +21,49 @@ export default function PostsPage() {
   const [view, setView] = useState<"tabela" | "kanban">("tabela");
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [imovelFilter, setImovelFilter] = useState("");
+  const [corretorFilter, setCorretorFilter] = useState("");
+  const [fromFilter, setFromFilter] = useState("");
+  const [toFilter, setToFilter] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [imoveis, setImoveis] = useState<Imovel[]>([]);
+  const [corretores, setCorretores] = useState<Corretor[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Post | null>(null);
+  const confirmDialog = useConfirm();
+  const toast = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    fetch("/api/imoveis").then((r) => r.json()).then((d) => setImoveis(d.data ?? []));
+    fetch("/api/corretores").then((r) => r.json()).then((d) => setCorretores(d.data ?? []));
+  }, []);
+
+  useEffect(() => {
+    const t = setTimeout(() => setSearch(searchInput), 400);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  useEffect(() => {
+    if (searchParams.get("action") === "new") {
+      setEditing(null);
+      setModalOpen(true);
+      router.replace("/dashboard/posts");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams();
     if (statusFilter) params.set("status", statusFilter);
+    if (imovelFilter) params.set("imovel_id", imovelFilter);
+    if (corretorFilter) params.set("corretor_id", corretorFilter);
+    if (fromFilter) params.set("from", new Date(fromFilter).toISOString());
+    if (toFilter) params.set("to", new Date(toFilter + "T23:59:59").toISOString());
+    if (search) params.set("q", search);
     if (view === "tabela") {
       params.set("page", String(page));
       params.set("pageSize", String(PAGE_SIZE));
@@ -35,7 +73,7 @@ export default function PostsPage() {
     setPosts(data.data ?? []);
     setCount(data.count ?? 0);
     setLoading(false);
-  }, [statusFilter, page, view]);
+  }, [statusFilter, imovelFilter, corretorFilter, fromFilter, toFilter, search, page, view]);
 
   useEffect(() => {
     load();
@@ -46,9 +84,23 @@ export default function PostsPage() {
     setPage(1);
   }
 
+  const hasActiveFilters = !!(imovelFilter || corretorFilter || fromFilter || toFilter || search);
+
+  function clearFilters() {
+    setImovelFilter("");
+    setCorretorFilter("");
+    setFromFilter("");
+    setToFilter("");
+    setSearchInput("");
+    setSearch("");
+    setPage(1);
+  }
+
   async function handleDelete(id: string) {
-    if (!confirm("Excluir este post?")) return;
+    const ok = await confirmDialog({ title: "Excluir post", message: "Excluir este post?", confirmLabel: "Excluir", danger: true });
+    if (!ok) return;
     await fetch(`/api/posts/${id}`, { method: "DELETE" });
+    toast("Post excluído.", "success");
     load();
   }
 
@@ -58,6 +110,8 @@ export default function PostsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
+    const meta = postStatusMeta(status);
+    toast(`Status atualizado para "${meta.label}".`, "success");
     load();
   }
 
@@ -123,6 +177,83 @@ export default function PostsPage() {
             {s.label}
           </button>
         ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 mb-5">
+        <div className="relative w-48 shrink-0">
+          <IconSearch className="w-3.5 h-3.5 text-navy-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <input
+            value={searchInput}
+            onChange={(e) => {
+              setSearchInput(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Buscar na copy..."
+            className="inp pl-8 py-1.5 text-xs"
+          />
+        </div>
+        <div className="w-36 shrink-0">
+          <select
+            value={imovelFilter}
+            onChange={(e) => {
+              setImovelFilter(e.target.value);
+              setPage(1);
+            }}
+            className="inp py-1.5 text-xs"
+          >
+            <option value="">Todos os imóveis</option>
+            {imoveis.map((im) => (
+              <option key={im.id} value={im.id}>
+                {im.codigo}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="w-40 shrink-0">
+          <select
+            value={corretorFilter}
+            onChange={(e) => {
+              setCorretorFilter(e.target.value);
+              setPage(1);
+            }}
+            className="inp py-1.5 text-xs"
+          >
+            <option value="">Todos os corretores</option>
+            {corretores.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="w-36 shrink-0">
+          <input
+            type="date"
+            value={fromFilter}
+            onChange={(e) => {
+              setFromFilter(e.target.value);
+              setPage(1);
+            }}
+            className="inp py-1.5 text-xs"
+          />
+        </div>
+        <span className="text-xs text-navy-400">até</span>
+        <div className="w-36 shrink-0">
+          <input
+            type="date"
+            value={toFilter}
+            onChange={(e) => {
+              setToFilter(e.target.value);
+              setPage(1);
+            }}
+            className="inp py-1.5 text-xs"
+          />
+        </div>
+        {hasActiveFilters && (
+          <button onClick={clearFilters} className="text-xs text-navy-500 hover:text-navy-800 underline">
+            Limpar filtros
+          </button>
+        )}
       </div>
 
       {view === "kanban" ? (

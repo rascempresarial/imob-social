@@ -5,6 +5,7 @@ import { Nota } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconNote, IconPin } from "@/components/icons";
 import { SkeletonCards } from "@/components/Skeleton";
+import { useConfirm, useToast } from "@/components/UIProvider";
 
 export default function NotasPage() {
   const [notas, setNotas] = useState<Nota[]>([]);
@@ -12,6 +13,8 @@ export default function NotasPage() {
   const [titulo, setTitulo] = useState("");
   const [conteudo, setConteudo] = useState("");
   const [saving, setSaving] = useState(false);
+  const confirmDialog = useConfirm();
+  const toast = useToast();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -37,6 +40,7 @@ export default function NotasPage() {
       });
       setTitulo("");
       setConteudo("");
+      toast("Nota adicionada.", "success");
       load();
     } finally {
       setSaving(false);
@@ -53,8 +57,10 @@ export default function NotasPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Excluir esta nota?")) return;
+    const ok = await confirmDialog({ title: "Excluir nota", message: "Excluir esta nota?", confirmLabel: "Excluir", danger: true });
+    if (!ok) return;
     await fetch(`/api/notas/${id}`, { method: "DELETE" });
+    toast("Nota excluída.", "success");
     load();
   }
 
