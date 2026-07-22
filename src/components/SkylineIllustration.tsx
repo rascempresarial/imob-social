@@ -1,17 +1,31 @@
 const GOLD = "#C9A24B";
-
-const BUILDINGS = [
-  { x: 20, w: 34, h: 150, shade: "#132A52" },
-  { x: 78, w: 46, h: 260, shade: "#0F2247" },
-  { x: 148, w: 30, h: 110, shade: "#1B3A6B" },
-  { x: 202, w: 42, h: 210, shade: "#132A52" },
-  { x: 268, w: 32, h: 165, shade: "#1B3A6B" },
-];
+const SHADE_A = "#132A52";
+const SHADE_B = "#1B3A6B";
 
 const VIEW_W = 380;
 const VIEW_H = 320;
 
+const FLOORS = 22;
+const TOWER_H = 280;
+const TOWER_W = 96;
+const TOTAL_TWIST = 70;
+const CENTER_X = 190;
+const BASE_Y = VIEW_H;
+
+function buildFloors() {
+  const floorH = TOWER_H / FLOORS;
+  const floors: { y: number; angle: number; shade: string }[] = [];
+  for (let i = 0; i < FLOORS; i++) {
+    const y = BASE_Y - (i + 1) * floorH;
+    const angle = (i / (FLOORS - 1)) * TOTAL_TWIST;
+    floors.push({ y, angle, shade: i % 2 === 0 ? SHADE_A : SHADE_B });
+  }
+  return { floors, floorH };
+}
+
 export default function SkylineIllustration() {
+  const { floors, floorH } = buildFloors();
+
   return (
     <svg
       viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
@@ -31,19 +45,32 @@ export default function SkylineIllustration() {
         <circle key={i} cx={cx} cy={cy} r={0.9} fill="#E7ECF5" className="star" style={{ animationDelay: `${i * 1.1}s` }} />
       ))}
 
-      {BUILDINGS.map((b, i) => {
-        const top = VIEW_H - b.h;
-        const bandY = top + Math.min(28, b.h * 0.14);
-        return (
-          <g key={i}>
-            <rect x={b.x} y={top} width={b.w} height={b.h} fill={b.shade} />
-            <rect x={b.x} y={bandY} width={b.w} height={1} fill={GOLD} opacity={0.55} />
-            <line x1={b.x} y1={top} x2={b.x} y2={VIEW_H} stroke={GOLD} strokeWidth={0.5} opacity={0.25} />
-          </g>
-        );
-      })}
+      {floors.map((f, i) => (
+        <rect
+          key={i}
+          x={CENTER_X - TOWER_W / 2}
+          y={f.y}
+          width={TOWER_W}
+          height={floorH + 0.6}
+          rx={2}
+          fill={f.shade}
+          transform={`rotate(${f.angle} ${CENTER_X} ${f.y + floorH / 2})`}
+        />
+      ))}
+      {floors.map((f, i) => (
+        <rect
+          key={`edge-${i}`}
+          x={CENTER_X - TOWER_W / 2}
+          y={f.y}
+          width={TOWER_W}
+          height={1}
+          fill={GOLD}
+          opacity={0.4}
+          transform={`rotate(${f.angle} ${CENTER_X} ${f.y + floorH / 2})`}
+        />
+      ))}
 
-      <line x1={0} y1={VIEW_H - 0.5} x2={VIEW_W} y2={VIEW_H - 0.5} stroke={GOLD} strokeWidth={0.5} opacity={0.3} />
+      <ellipse cx={CENTER_X} cy={BASE_Y - 1} rx={TOWER_W * 0.75} ry={6} fill={GOLD} opacity={0.12} />
     </svg>
   );
 }

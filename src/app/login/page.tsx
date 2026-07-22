@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import SkylineIllustration from "@/components/SkylineIllustration";
 
 export default function LoginPage() {
@@ -55,18 +56,16 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent" />
 
         <div className="relative z-10 text-center px-10">
-          <h1 className="text-3xl font-semibold text-white tracking-tight">
-            <span className="typewriter">Gestão de redes</span>
-          </h1>
+          <h1 className="text-3xl font-semibold text-white tracking-tight title-reveal">Gestão de redes</h1>
+          <div className="gold-underline mx-auto mt-3" />
           <p className="text-white/50 text-sm mt-3 fade-in-delayed">Gestão de rede e anúncios</p>
         </div>
       </div>
 
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-paper px-6">
         <div className="w-full max-w-sm fade-in-delayed">
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-navy-900 tracking-tight">Entrar</h2>
-            <p className="text-navy-500 text-sm mt-1">Use sua chave de acesso pessoal</p>
+          <div className="mb-8 flex justify-center">
+            <Image src="/pedro-granado-logo.png" alt="Pedro Granado Imóveis" width={280} height={64} priority className="h-14 w-auto" />
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
