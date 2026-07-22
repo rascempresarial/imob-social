@@ -56,7 +56,7 @@ export default function ImovelModal({
     <Modal title={editing ? "Editar imóvel" : "Novo imóvel"} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Código (ID)">
+          <Field label="Código (KSI)">
             <input
               className="inp"
               value={draft.codigo ?? ""}

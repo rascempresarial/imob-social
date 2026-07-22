@@ -273,8 +273,8 @@ export default function PostsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-navy-100 text-left text-navy-500">
-                  <th className="px-4 py-3 font-medium">Imóvel</th>
-                  <th className="px-4 py-3 font-medium">Edifício</th>
+                  <th className="px-4 py-3 font-medium">KSI</th>
+                  <th className="px-4 py-3 font-medium">Data</th>
                   <th className="px-4 py-3 font-medium">Rede</th>
                   <th className="px-4 py-3 font-medium">Tipo</th>
                   <th className="px-4 py-3 font-medium">Publicação</th>
@@ -309,7 +309,9 @@ export default function PostsPage() {
                             </div>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-navy-600">{p.imovel?.edificio ?? "·"}</td>
+                        <td className="px-4 py-3 text-navy-600 whitespace-nowrap">
+                          {p.data_publicacao ? new Date(p.data_publicacao).toLocaleDateString("pt-BR") : "·"}
+                        </td>
                         <td className="px-4 py-3 text-navy-600">{postRedeMeta(p.rede).label}</td>
                         <td className="px-4 py-3 text-navy-600 capitalize">{p.tipo}</td>
                         <td className="px-4 py-3 text-navy-600 whitespace-nowrap">

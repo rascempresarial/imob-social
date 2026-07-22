@@ -83,7 +83,7 @@ export default function ImoveisPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-navy-100 text-left text-navy-500">
-              <th className="px-4 py-3 font-medium">Código</th>
+              <th className="px-4 py-3 font-medium">KSI</th>
               <th className="px-4 py-3 font-medium">Título</th>
               <th className="px-4 py-3 font-medium">Edifício</th>
               <th className="px-4 py-3 font-medium">Status</th>

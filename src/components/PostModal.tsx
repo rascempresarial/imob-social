@@ -99,7 +99,7 @@ export default function PostModal({
 
         {imovelSelecionado && (
           <div className="text-xs text-navy-600 -mt-2">
-            Edifício: {imovelSelecionado.edificio ?? "·"} · ID: {imovelSelecionado.codigo}
+            Edifício: {imovelSelecionado.edificio ?? "·"} · KSI: {imovelSelecionado.codigo}
             {imovelIndisponivel && (
               <span className="ml-2 inline-flex items-center gap-1 text-red-600 font-medium">
                 <IconAlert className="w-3.5 h-3.5" />
