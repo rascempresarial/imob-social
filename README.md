@@ -60,6 +60,4 @@ Import direto pela UI da Vercel (New Project → Import Git Repository →
 Configurar exatamente 3 variáveis de ambiente, iguais às do `.env.local`:
 `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SESSION_SECRET`.
 
-**Nunca configurar `DEV_BYPASS_AUTH` na Vercel** — essa variável existe só
-para uso local temporário (pula o login inteiro) e nunca deve ir para
-produção.
+Já em produção: https://imob-social.vercel.app

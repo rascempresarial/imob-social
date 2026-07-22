@@ -19,8 +19,7 @@ async function isValid(token: string | undefined): Promise<boolean> {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get(SESSION_COOKIE)?.value;
-  // Mesmo bypass temporário de src/lib/auth.ts, ver comentário lá.
-  const authed = process.env.DEV_BYPASS_AUTH === "true" || (await isValid(token));
+  const authed = await isValid(token);
   const isPublic = PUBLIC_PATHS.includes(pathname);
 
   if (pathname === "/login" && authed) {

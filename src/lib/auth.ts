@@ -33,12 +33,6 @@ export async function verifySession(token: string): Promise<SessionPayload | nul
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-  // Modo de teste temporário: pula a checagem de login enquanto depuramos
-  // o fluxo de autenticação. Só funciona se DEV_BYPASS_AUTH estiver setado
-  // no .env.local — remover essa variável (e este bloco) antes de ir pra produção.
-  if (process.env.DEV_BYPASS_AUTH === "true") {
-    return { label: "Modo de teste", keyId: "dev-bypass" };
-  }
   const token = cookies().get(SESSION_COOKIE)?.value;
   if (!token) return null;
   return verifySession(token);
