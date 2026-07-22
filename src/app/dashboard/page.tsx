@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { POST_STATUSES, postStatusMeta } from "@/lib/types";
+import { POST_STATUSES, postRedeMeta, postStatusMeta } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconEye, IconHeart, IconHome } from "@/components/icons";
 
@@ -18,8 +18,8 @@ interface PostRow {
   updated_at: string;
   alcance: number | null;
   curtidas: number | null;
+  rede: string;
   imovel: { id: string; codigo: string; titulo: string; status: string } | null;
-  corretor: { nome: string } | null;
 }
 
 export default async function DashboardPage() {
@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     supabase
       .from("posts")
       .select(
-        "id, status, data_publicacao, updated_at, alcance, curtidas, imovel:imoveis(id, codigo, titulo, status), corretor:corretores(nome)"
+        "id, status, data_publicacao, updated_at, alcance, curtidas, rede, imovel:imoveis(id, codigo, titulo, status)"
       ),
     supabase.from("imoveis").select("id, status"),
   ]);
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
               <div key={p.id} className="flex items-center justify-between px-4 py-3 border-b border-navy-100 last:border-0">
                 <div>
                   <p className="text-sm text-navy-900">{p.imovel ? `${p.imovel.codigo}, ${p.imovel.titulo}` : "Sem imóvel"}</p>
-                  <p className="text-xs text-navy-500">{p.corretor?.nome ?? "sem corretor"}</p>
+                  <p className="text-xs text-navy-500">{postRedeMeta(p.rede).label}</p>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-navy-600">
                   <span className="flex items-center gap-1">
