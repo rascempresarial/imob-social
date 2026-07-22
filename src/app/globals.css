@@ -87,14 +87,6 @@ body {
   50% { transform: translate(-40px, -45px); }
 }
 
-.zigzag-pulse {
-  animation: zigzag-pulse 3.5s ease-in-out infinite;
-}
-@keyframes zigzag-pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
 .star {
   opacity: 0.2;
   animation: star-twinkle 6s ease-in-out infinite;

@@ -58,13 +58,12 @@ export default function LoginPage() {
 
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-paper px-6">
         <div className="w-full max-w-sm fade-in-delayed">
-          <div className="mb-3 flex justify-center">
+          <div className="mb-8 flex justify-center">
             <Image src="/pedro-granado-logo.png" alt="Pedro Granado Imóveis" width={280} height={64} priority className="h-14 w-auto" />
           </div>
-          <p className="text-center text-xs text-navy-400 mb-8">Chave de acesso para acessar a gestão de redes</p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-navy-800 mb-1">Chave de acesso</label>
+              <label className="block text-xs font-medium text-navy-800 mb-1">Chave de acesso para acessar a gestão de redes</label>
               <div className="relative">
                 <input
                   type={showKey ? "text" : "password"}
