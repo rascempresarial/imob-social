@@ -31,7 +31,13 @@ export default function AuditoriaPage() {
 
   return (
     <div>
-      <PageHeader icon={<IconHistory className="w-full h-full" />} title="Auditoria" subtitle="Histórico de ações realizadas nos posts" />
+      <PageHeader
+        icon={<IconHistory className="w-full h-full" />}
+        title="Auditoria"
+        subtitle="Histórico de ações realizadas nos posts"
+        backHref="/dashboard/configuracoes"
+        backLabel="Configurações"
+      />
 
       <div className="rounded-xl border border-navy-100 bg-white overflow-hidden">
         <table className="w-full text-sm">

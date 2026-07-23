@@ -68,6 +68,10 @@ export default function Sidebar({ label, isAdmin }: { label: string; isAdmin: bo
     <aside className="w-60 shrink-0 bg-navy-800 min-h-screen flex flex-col">
       <div className="px-5 py-6 border-b border-white/10">
         <span className="text-white font-semibold tracking-tight text-lg">Gestão de redes</span>
+        <div className="flex items-center gap-2 mt-2">
+          <span className="pulse-dot" />
+          <p className="text-xs text-white/40 truncate">{label}</p>
+        </div>
       </div>
       <div className="px-3 pt-4">
         <button
@@ -107,10 +111,6 @@ export default function Sidebar({ label, isAdmin }: { label: string; isAdmin: bo
               <s.icon className="w-[18px] h-[18px]" />
             </a>
           ))}
-        </div>
-        <div className="flex items-center gap-2 px-3 mb-2">
-          <span className="pulse-dot" />
-          <p className="text-xs text-white/40 truncate">{label}</p>
         </div>
         {isAdmin && (
           <NavLink

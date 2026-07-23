@@ -102,6 +102,8 @@ export default function ChavesPage() {
         icon={<IconKey className="w-full h-full" />}
         title="Chaves de acesso"
         subtitle="Cada pessoa da equipe entra com uma chave própria, sem senha, sem email"
+        backHref="/dashboard/configuracoes"
+        backLabel="Configurações"
       />
 
       <form onSubmit={handleCreate} className="flex items-end gap-3 mb-6 max-w-xl">
