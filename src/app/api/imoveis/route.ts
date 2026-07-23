@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
   const page = searchParams.get("page") ? Number(searchParams.get("page")) : null;
   const pageSize = Number(searchParams.get("pageSize") || 20);
   const corretorId = searchParams.get("corretor_id");
+  const q = searchParams.get("q");
 
   let query = getSupabaseAdmin()
     .from("imoveis")
@@ -17,6 +18,7 @@ export async function GET(req: NextRequest) {
     .order("created_at", { ascending: false });
 
   if (corretorId) query = query.eq("corretor_id", corretorId);
+  if (q) query = query.ilike("codigo", `%${q}%`);
 
   if (page) {
     const start = (page - 1) * pageSize;
@@ -45,6 +47,7 @@ export async function POST(req: NextRequest) {
       codigo,
       titulo,
       status: body?.status || "disponivel",
+      finalidade: body?.finalidade || "venda",
       endereco: body?.endereco || null,
       valor: body?.valor ? Number(body.valor) : null,
       link_site: body?.link_site || null,

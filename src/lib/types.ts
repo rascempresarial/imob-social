@@ -1,4 +1,5 @@
 export type ImovelStatus = "disponivel" | "reservado" | "vendido" | "alugado" | "indisponivel";
+export type ImovelFinalidade = "venda" | "locacao";
 export type PostTipo = "feed" | "reels" | "story";
 export type PostStatus = "em_revisao" | "aprovado" | "reprovado" | "agendado" | "publicado";
 export type PostRede = "instagram_facebook" | "linkedin" | "youtube" | "blog";
@@ -31,6 +32,7 @@ export interface Imovel {
   codigo: string;
   titulo: string;
   status: ImovelStatus;
+  finalidade: ImovelFinalidade;
   endereco: string | null;
   valor: number | null;
   link_site: string | null;
@@ -109,6 +111,15 @@ export const IMOVEL_STATUSES: { value: ImovelStatus; label: string; color: strin
 
 export function imovelStatusMeta(value: string) {
   return IMOVEL_STATUSES.find((s) => s.value === value) ?? IMOVEL_STATUSES[0];
+}
+
+export const IMOVEL_FINALIDADES: { value: ImovelFinalidade; label: string; color: string }[] = [
+  { value: "venda", label: "Venda", color: "#1B8A5A" },
+  { value: "locacao", label: "Locação", color: "#2C5AA0" },
+];
+
+export function imovelFinalidadeMeta(value: string) {
+  return IMOVEL_FINALIDADES.find((f) => f.value === value) ?? IMOVEL_FINALIDADES[0];
 }
 
 export const POST_TIPOS: { value: PostTipo; label: string }[] = [

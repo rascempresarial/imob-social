@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
-const EDITABLE = ["codigo", "titulo", "status", "endereco", "valor", "link_site", "corretor_id", "patrocinado"];
+const EDITABLE = ["codigo", "titulo", "status", "finalidade", "endereco", "valor", "link_site", "corretor_id", "patrocinado"];
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getSession();

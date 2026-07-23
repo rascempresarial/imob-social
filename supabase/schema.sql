@@ -35,12 +35,14 @@ alter table corretores enable row level security;
 
 -- ── Imóveis ───────────────────────────────────────────────────────────────
 create type imovel_status as enum ('disponivel', 'reservado', 'vendido', 'alugado', 'indisponivel');
+create type imovel_finalidade as enum ('venda', 'locacao');
 
 create table imoveis (
   id uuid primary key default gen_random_uuid(),
   codigo text not null unique,
   titulo text not null,
   status imovel_status not null default 'disponivel',
+  finalidade imovel_finalidade not null default 'venda',
   endereco text,
   valor numeric,
   link_site text,

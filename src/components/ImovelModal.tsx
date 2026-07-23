@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import Field from "./Field";
-import { Corretor, Imovel, IMOVEL_STATUSES } from "@/lib/types";
+import { Corretor, Imovel, IMOVEL_FINALIDADES, IMOVEL_STATUSES } from "@/lib/types";
 import { useToast } from "./UIProvider";
 
 type Draft = Partial<Imovel>;
@@ -89,7 +89,7 @@ export default function ImovelModal({
   return (
     <Modal title={editing ? "Editar imóvel" : "Novo imóvel"} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <Field label="Código (KSI)">
             <input
               className="inp"
@@ -98,6 +98,19 @@ export default function ImovelModal({
               placeholder="AP-1023"
               required
             />
+          </Field>
+          <Field label="Venda ou Locação">
+            <select
+              className="inp"
+              value={draft.finalidade ?? "venda"}
+              onChange={(e) => set("finalidade", e.target.value as Imovel["finalidade"])}
+            >
+              {IMOVEL_FINALIDADES.map((f) => (
+                <option key={f.value} value={f.value}>
+                  {f.label}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="Status">
             <select className="inp" value={draft.status ?? "disponivel"} onChange={(e) => set("status", e.target.value as Imovel["status"])}>
