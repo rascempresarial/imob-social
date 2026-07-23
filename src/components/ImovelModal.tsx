@@ -119,8 +119,23 @@ export default function ImovelModal({
           />
         </Field>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Edifício">
-            <input className="inp" value={draft.edificio ?? ""} onChange={(e) => set("edificio", e.target.value)} />
+          <Field label="Patrocinado / ADS">
+            <button
+              type="button"
+              onClick={() => set("patrocinado", !draft.patrocinado)}
+              className={`w-full inp text-left flex items-center justify-between ${
+                draft.patrocinado ? "border-navy-800" : ""
+              }`}
+            >
+              <span>{draft.patrocinado ? "Sim" : "Não"}</span>
+              <span
+                className={`text-[10px] rounded-full px-2 py-0.5 font-medium ${
+                  draft.patrocinado ? "bg-navy-800 text-white" : "bg-navy-100 text-navy-500"
+                }`}
+              >
+                {draft.patrocinado ? "Ativo" : "Inativo"}
+              </span>
+            </button>
           </Field>
           <Field label="Corretor">
             <select

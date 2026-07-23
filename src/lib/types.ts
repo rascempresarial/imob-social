@@ -30,12 +30,12 @@ export interface Imovel {
   id: string;
   codigo: string;
   titulo: string;
-  edificio: string | null;
   status: ImovelStatus;
   endereco: string | null;
   valor: number | null;
   link_site: string | null;
   corretor_id: string | null;
+  patrocinado: boolean;
   created_at: string;
   updated_at: string;
   // preenchido via join na listagem
@@ -63,7 +63,7 @@ export interface Post {
   created_at: string;
   updated_at: string;
   // preenchido via join na listagem
-  imovel?: Pick<Imovel, "id" | "codigo" | "titulo" | "edificio" | "status"> | null;
+  imovel?: Pick<Imovel, "id" | "codigo" | "titulo" | "status"> | null;
 }
 
 export interface Nota {

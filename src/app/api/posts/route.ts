@@ -3,7 +3,7 @@ import { getSession } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { logAudit } from "@/lib/audit";
 
-const SELECT = "*, imovel:imoveis(id, codigo, titulo, edificio, status)";
+const SELECT = "*, imovel:imoveis(id, codigo, titulo, status)";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();

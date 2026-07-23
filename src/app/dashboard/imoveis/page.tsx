@@ -47,6 +47,15 @@ export default function ImoveisPage() {
     load();
   }, [load]);
 
+  async function togglePatrocinado(im: Imovel) {
+    await fetch(`/api/imoveis/${im.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ patrocinado: !im.patrocinado }),
+    });
+    load();
+  }
+
   async function handleDelete(id: string) {
     const ok = await confirmDialog({
       title: "Excluir imóvel",
@@ -85,7 +94,7 @@ export default function ImoveisPage() {
             <tr className="border-b border-navy-100 text-left text-navy-500">
               <th className="px-4 py-3 font-medium">KSI</th>
               <th className="px-4 py-3 font-medium">Título</th>
-              <th className="px-4 py-3 font-medium">Edifício</th>
+              <th className="px-4 py-3 font-medium">Patrocinado / ADS</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Valor</th>
               <th className="px-4 py-3"></th>
@@ -122,7 +131,16 @@ export default function ImoveisPage() {
                         )}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-navy-600">{im.edificio ?? "·"}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => togglePatrocinado(im)}
+                        className={`text-xs rounded-full px-2.5 py-0.5 font-medium ${
+                          im.patrocinado ? "bg-navy-800 text-white" : "bg-navy-100 text-navy-500"
+                        }`}
+                      >
+                        {im.patrocinado ? "Sim" : "Não"}
+                      </button>
+                    </td>
                     <td className="px-4 py-3">
                       <Badge label={meta.label} color={meta.color} />
                     </td>

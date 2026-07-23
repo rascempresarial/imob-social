@@ -2,35 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
-const ANUNCIO_STATUSES = ["aprovado", "agendado", "publicado"];
-
 export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
   const supabase = getSupabaseAdmin();
-  const [{ data: corretores, error: e1 }, { data: imoveis, error: e2 }, { data: posts, error: e3 }] = await Promise.all([
+  const [{ data: corretores, error: e1 }, { data: imoveis, error: e2 }] = await Promise.all([
     supabase.from("corretores").select("*").order("nome", { ascending: true }),
-    supabase.from("imoveis").select("id, corretor_id"),
-    supabase.from("posts").select("imovel_id, anunciado, status"),
+    supabase.from("imoveis").select("corretor_id, patrocinado"),
   ]);
-  const error = e1 || e2 || e3;
+  const error = e1 || e2;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const imovelCorretor = new Map<string, string>();
   const imoveisCount = new Map<string, number>();
+  const anunciosCount = new Map<string, number>();
   for (const im of imoveis ?? []) {
     if (!im.corretor_id) continue;
-    imovelCorretor.set(im.id, im.corretor_id);
     imoveisCount.set(im.corretor_id, (imoveisCount.get(im.corretor_id) ?? 0) + 1);
-  }
-
-  const anunciosCount = new Map<string, number>();
-  for (const p of posts ?? []) {
-    if (!p.anunciado || !ANUNCIO_STATUSES.includes(p.status) || !p.imovel_id) continue;
-    const corretorId = imovelCorretor.get(p.imovel_id);
-    if (!corretorId) continue;
-    anunciosCount.set(corretorId, (anunciosCount.get(corretorId) ?? 0) + 1);
+    if (im.patrocinado) anunciosCount.set(im.corretor_id, (anunciosCount.get(im.corretor_id) ?? 0) + 1);
   }
 
   const data = (corretores ?? []).map((c) => ({

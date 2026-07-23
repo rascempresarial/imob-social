@@ -40,12 +40,12 @@ create table imoveis (
   id uuid primary key default gen_random_uuid(),
   codigo text not null unique,
   titulo text not null,
-  edificio text,
   status imovel_status not null default 'disponivel',
   endereco text,
   valor numeric,
   link_site text,
   corretor_id uuid references corretores(id) on delete set null,
+  patrocinado boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

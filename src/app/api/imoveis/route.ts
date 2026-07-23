@@ -41,12 +41,12 @@ export async function POST(req: NextRequest) {
     .insert({
       codigo,
       titulo,
-      edificio: body?.edificio || null,
       status: body?.status || "disponivel",
       endereco: body?.endereco || null,
       valor: body?.valor ? Number(body.valor) : null,
       link_site: body?.link_site || null,
       corretor_id: body?.corretor_id || null,
+      patrocinado: body?.patrocinado ?? false,
     })
     .select()
     .single();
