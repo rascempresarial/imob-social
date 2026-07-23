@@ -22,6 +22,10 @@ export default function ImovelModal({
   const [corretores, setCorretores] = useState<Corretor[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [creatingCorretor, setCreatingCorretor] = useState(false);
+  const [novoCorretorNome, setNovoCorretorNome] = useState("");
+  const [novoCorretorTelefone, setNovoCorretorTelefone] = useState("");
+  const [savingCorretor, setSavingCorretor] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -30,6 +34,31 @@ export default function ImovelModal({
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((d) => ({ ...d, [key]: value }));
+  }
+
+  async function handleCreateCorretor() {
+    if (!novoCorretorNome.trim()) return;
+    setSavingCorretor(true);
+    try {
+      const res = await fetch("/api/corretores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome: novoCorretorNome, telefone: novoCorretorTelefone }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast(data.error ?? "Erro ao criar corretor.", "error");
+        return;
+      }
+      setCorretores((prev) => [...prev, data.data].sort((a, b) => a.nome.localeCompare(b.nome)));
+      set("corretor_id", data.data.id);
+      setCreatingCorretor(false);
+      setNovoCorretorNome("");
+      setNovoCorretorTelefone("");
+      toast("Corretor criado.", "success");
+    } finally {
+      setSavingCorretor(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -97,7 +126,13 @@ export default function ImovelModal({
             <select
               className="inp"
               value={draft.corretor_id ?? ""}
-              onChange={(e) => set("corretor_id", e.target.value || null)}
+              onChange={(e) => {
+                if (e.target.value === "__new__") {
+                  setCreatingCorretor(true);
+                  return;
+                }
+                set("corretor_id", e.target.value || null);
+              }}
             >
               <option value="">Sem corretor</option>
               {corretores.map((c) => (
@@ -105,9 +140,51 @@ export default function ImovelModal({
                   {c.nome}
                 </option>
               ))}
+              <option value="__new__">+ Cadastrar novo corretor</option>
             </select>
           </Field>
         </div>
+        {creatingCorretor && (
+          <div className="rounded-lg border border-navy-100 bg-paper p-3 flex items-end gap-2">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-navy-800 mb-1">Nome do corretor</label>
+              <input
+                className="inp"
+                autoFocus
+                value={novoCorretorNome}
+                onChange={(e) => setNovoCorretorNome(e.target.value)}
+                placeholder="Ex: Ana Corretora"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-navy-800 mb-1">Telefone (opcional)</label>
+              <input
+                className="inp"
+                value={novoCorretorTelefone}
+                onChange={(e) => setNovoCorretorTelefone(e.target.value)}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleCreateCorretor}
+              disabled={savingCorretor || !novoCorretorNome.trim()}
+              className="px-3 py-2 text-xs rounded-lg bg-navy-800 text-white hover:bg-navy-700 disabled:opacity-50 whitespace-nowrap h-[38px]"
+            >
+              {savingCorretor ? "Salvando..." : "Adicionar"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setCreatingCorretor(false);
+                setNovoCorretorNome("");
+                setNovoCorretorTelefone("");
+              }}
+              className="px-2 py-2 text-xs text-navy-500 hover:text-navy-800 h-[38px]"
+            >
+              Cancelar
+            </button>
+          </div>
+        )}
         <Field label="Endereço">
           <input className="inp" value={draft.endereco ?? ""} onChange={(e) => set("endereco", e.target.value)} />
         </Field>
