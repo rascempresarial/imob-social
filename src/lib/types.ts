@@ -1,14 +1,14 @@
 export type ImovelStatus = "disponivel" | "reservado" | "vendido" | "alugado" | "indisponivel";
 export type PostTipo = "feed" | "reels" | "story";
-export type PostStatus = "rascunho" | "em_revisao" | "aprovado" | "reprovado" | "agendado" | "publicado";
+export type PostStatus = "em_revisao" | "aprovado" | "reprovado" | "agendado" | "publicado";
 export type PostRede = "instagram_facebook" | "linkedin" | "youtube" | "blog";
-export type MidiaTipo = "foto" | "video";
 
 export interface AccessKey {
   id: string;
   label: string;
   key: string;
   active: boolean;
+  is_admin: boolean;
   created_at: string;
   last_used_at: string | null;
 }
@@ -56,17 +56,6 @@ export interface Post {
   updated_at: string;
   // preenchido via join na listagem
   imovel?: Pick<Imovel, "id" | "codigo" | "titulo" | "edificio" | "status"> | null;
-}
-
-export interface Midia {
-  id: string;
-  imovel_id: string | null;
-  post_id: string | null;
-  tipo: MidiaTipo;
-  storage_path: string;
-  nome_arquivo: string | null;
-  created_at: string;
-  url?: string; // signed URL, preenchida na listagem
 }
 
 export interface Nota {
@@ -132,7 +121,6 @@ export function postRedeMeta(value: string) {
 }
 
 export const POST_STATUSES: { value: PostStatus; label: string; color: string }[] = [
-  { value: "rascunho", label: "Rascunho", color: "#6B7280" },
   { value: "em_revisao", label: "Em revisão", color: "#B98900" },
   { value: "aprovado", label: "Aprovado", color: "#1B8A5A" },
   { value: "reprovado", label: "Reprovado", color: "#B3261E" },

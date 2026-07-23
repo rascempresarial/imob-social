@@ -7,11 +7,11 @@ import {
   IconCalendar,
   IconHistory,
   IconHome,
-  IconImage,
   IconKey,
   IconLayers,
   IconNote,
   IconPlus,
+  IconSettings,
   IconUsers,
 } from "./icons";
 
@@ -28,27 +28,32 @@ const COMMANDS: Command[] = [
   { id: "nav-calendario", label: "Calendário editorial", group: "Navegar", href: "/dashboard/calendario", icon: <IconCalendar className="w-4 h-4" /> },
   { id: "nav-posts", label: "Posts", group: "Navegar", href: "/dashboard/posts", icon: <IconLayers className="w-4 h-4" /> },
   { id: "nav-imoveis", label: "Imóveis", group: "Navegar", href: "/dashboard/imoveis", icon: <IconBuilding className="w-4 h-4" /> },
-  { id: "nav-midia", label: "Mídia", group: "Navegar", href: "/dashboard/midia", icon: <IconImage className="w-4 h-4" /> },
   { id: "nav-corretores", label: "Corretores", group: "Navegar", href: "/dashboard/corretores", icon: <IconUsers className="w-4 h-4" /> },
   { id: "nav-notas", label: "Notas", group: "Navegar", href: "/dashboard/notas", icon: <IconNote className="w-4 h-4" /> },
-  { id: "nav-chaves", label: "Chaves de acesso", group: "Navegar", href: "/dashboard/chaves", icon: <IconKey className="w-4 h-4" /> },
-  { id: "nav-auditoria", label: "Auditoria", group: "Navegar", href: "/dashboard/auditoria", icon: <IconHistory className="w-4 h-4" /> },
   { id: "new-post", label: "Novo post", group: "Criar", href: "/dashboard/posts?action=new", icon: <IconPlus className="w-4 h-4" /> },
   { id: "new-imovel", label: "Novo imóvel", group: "Criar", href: "/dashboard/imoveis?action=new", icon: <IconPlus className="w-4 h-4" /> },
 ];
 
-export default function CommandPalette() {
+const ADMIN_COMMANDS: Command[] = [
+  { id: "nav-configuracoes", label: "Configurações", group: "Navegar", href: "/dashboard/configuracoes", icon: <IconSettings className="w-4 h-4" /> },
+  { id: "nav-chaves", label: "Chaves de acesso", group: "Navegar", href: "/dashboard/configuracoes/chaves", icon: <IconKey className="w-4 h-4" /> },
+  { id: "nav-auditoria", label: "Auditoria", group: "Navegar", href: "/dashboard/configuracoes/auditoria", icon: <IconHistory className="w-4 h-4" /> },
+];
+
+export default function CommandPalette({ isAdmin }: { isAdmin: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const allCommands = useMemo(() => (isAdmin ? [...COMMANDS, ...ADMIN_COMMANDS] : COMMANDS), [isAdmin]);
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return COMMANDS;
-    return COMMANDS.filter((c) => c.label.toLowerCase().includes(q));
-  }, [query]);
+    if (!q) return allCommands;
+    return allCommands.filter((c) => c.label.toLowerCase().includes(q));
+  }, [query, allCommands]);
 
   useEffect(() => {
     function handleKeydown(e: KeyboardEvent) {

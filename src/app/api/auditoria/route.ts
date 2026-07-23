@@ -4,7 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+  if (!session?.isAdmin) return NextResponse.json({ error: "Não autorizado." }, { status: 403 });
 
   const { searchParams } = new URL(req.url);
   const page = Number(searchParams.get("page") || 1);

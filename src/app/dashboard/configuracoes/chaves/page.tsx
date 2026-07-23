@@ -63,6 +63,15 @@ export default function ChavesPage() {
     load();
   }
 
+  async function toggleAdmin(k: AccessKey) {
+    await fetch(`/api/access-keys/${k.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_admin: !k.is_admin }),
+    });
+    load();
+  }
+
   async function handleDelete(id: string) {
     const ok = await confirmDialog({
       title: "Excluir chave",
@@ -137,14 +146,15 @@ export default function ChavesPage() {
               <th className="px-4 py-3 font-medium">Chave</th>
               <th className="px-4 py-3 font-medium">Último acesso</th>
               <th className="px-4 py-3 font-medium">Ativa</th>
+              <th className="px-4 py-3 font-medium">Admin</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody>
-            {loading && <SkeletonTableRows cols={5} />}
+            {loading && <SkeletonTableRows cols={6} />}
             {!loading && keys.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-navy-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-navy-400">
                   Nenhuma chave cadastrada ainda.
                 </td>
               </tr>
@@ -171,6 +181,16 @@ export default function ChavesPage() {
                     }`}
                   >
                     {k.active ? "Ativa" : "Desativada"}
+                  </button>
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => toggleAdmin(k)}
+                    className={`text-xs rounded-full px-2.5 py-0.5 font-medium ${
+                      k.is_admin ? "bg-navy-800 text-white" : "bg-navy-100 text-navy-500"
+                    }`}
+                  >
+                    {k.is_admin ? "Admin" : "Não"}
                   </button>
                 </td>
                 <td className="px-4 py-3 text-right">

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("access_keys")
-    .select("id, label, active")
+    .select("id, label, active, is_admin")
     .eq("key", key)
     .maybeSingle();
 
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   await supabase.from("access_keys").update({ last_used_at: new Date().toISOString() }).eq("id", data.id);
 
-  const token = await createSession({ label: data.label, keyId: data.id });
+  const token = await createSession({ label: data.label, keyId: data.id, isAdmin: !!data.is_admin });
   const res = NextResponse.json({ ok: true, label: data.label });
   res.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,

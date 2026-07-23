@@ -13,6 +13,7 @@ function secret() {
 export interface SessionPayload {
   label: string;
   keyId: string;
+  isAdmin: boolean;
 }
 
 export async function createSession(payload: SessionPayload): Promise<string> {
@@ -26,7 +27,7 @@ export async function createSession(payload: SessionPayload): Promise<string> {
 export async function verifySession(token: string): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, secret());
-    return { label: String(payload.label), keyId: String(payload.keyId) };
+    return { label: String(payload.label), keyId: String(payload.keyId), isAdmin: Boolean(payload.isAdmin) };
   } catch {
     return null;
   }

@@ -26,7 +26,7 @@ export default function PostModal({
   onSaved: () => void;
 }) {
   const editing = !!initial;
-  const [draft, setDraft] = useState<Draft>(initial ?? { tipo: "feed", rede: "instagram_facebook", status: "rascunho", anunciado: false });
+  const [draft, setDraft] = useState<Draft>(initial ?? { tipo: "feed", rede: "instagram_facebook", status: "em_revisao", anunciado: false });
   const [imoveis, setImoveis] = useState<Imovel[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -120,7 +120,7 @@ export default function PostModal({
             </select>
           </Field>
           <Field label="Status">
-            <select className="inp" value={draft.status ?? "rascunho"} onChange={(e) => set("status", e.target.value as Post["status"])}>
+            <select className="inp" value={draft.status ?? "em_revisao"} onChange={(e) => set("status", e.target.value as Post["status"])}>
               {POST_STATUSES.map((s) => (
                 <option key={s.value} value={s.value}>
                   {s.label}

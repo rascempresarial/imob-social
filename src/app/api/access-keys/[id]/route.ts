@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
-const EDITABLE = ["label", "active"];
+const EDITABLE = ["label", "active", "is_admin"];
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+  if (!session?.isAdmin) return NextResponse.json({ error: "Não autorizado." }, { status: 403 });
 
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Corpo inválido." }, { status: 400 });
@@ -23,7 +23,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+  if (!session?.isAdmin) return NextResponse.json({ error: "Não autorizado." }, { status: 403 });
 
   if (params.id === session.keyId) {
     return NextResponse.json({ error: "Você não pode excluir a chave que está usando agora." }, { status: 400 });

@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       copy: body.copy || null,
       data_publicacao: body.data_publicacao || null,
       anunciado: body.anunciado ?? false,
-      status: body.status || "rascunho",
+      status: body.status || "em_revisao",
       created_by: session.label,
     })
     .select(SELECT)

@@ -5,7 +5,7 @@ import { generateAccessKey } from "@/lib/keygen";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+  if (!session?.isAdmin) return NextResponse.json({ error: "Não autorizado." }, { status: 403 });
 
   const { data, error } = await getSupabaseAdmin()
     .from("access_keys")
@@ -18,7 +18,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+  if (!session?.isAdmin) return NextResponse.json({ error: "Não autorizado." }, { status: 403 });
 
   const body = await req.json().catch(() => null);
   const label = typeof body?.label === "string" ? body.label.trim() : "";

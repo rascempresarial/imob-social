@@ -6,16 +6,14 @@ import {
   IconBuilding,
   IconCalendar,
   IconGlobe,
-  IconHistory,
   IconHome,
-  IconImage,
   IconInstagram,
-  IconKey,
   IconLayers,
   IconLinkedin,
   IconLogout,
   IconNote,
   IconSearch,
+  IconSettings,
   IconUsers,
   IconYoutube,
 } from "./icons";
@@ -24,18 +22,12 @@ const NAV = [
   { href: "/dashboard", label: "Visão geral", icon: IconHome },
   { href: "/dashboard/calendario", label: "Calendário editorial", icon: IconCalendar },
   { href: "/dashboard/posts", label: "Posts", icon: IconLayers },
-  { href: "/dashboard/midia", label: "Mídia", icon: IconImage },
   { href: "/dashboard/notas", label: "Notas", icon: IconNote },
 ];
 
 const CADASTROS = [
   { href: "/dashboard/imoveis", label: "Imóveis", icon: IconBuilding },
   { href: "/dashboard/corretores", label: "Corretores", icon: IconUsers },
-];
-
-const ADMIN = [
-  { href: "/dashboard/chaves", label: "Chaves de acesso", icon: IconKey },
-  { href: "/dashboard/auditoria", label: "Auditoria", icon: IconHistory },
 ];
 
 const SOCIAL_LINKS = [
@@ -60,7 +52,7 @@ function NavLink({ href, label, icon: Icon, active }: { href: string; label: str
   );
 }
 
-export default function Sidebar({ label }: { label: string }) {
+export default function Sidebar({ label, isAdmin }: { label: string; isAdmin: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -100,13 +92,6 @@ export default function Sidebar({ label }: { label: string }) {
             ))}
           </div>
         </div>
-
-        <div className="pt-4 mt-3 border-t border-white/10 space-y-1">
-          {ADMIN.map((item) => (
-            <NavLink key={item.href} {...item} active={!!isActive(item.href)} />
-          ))}
-        </div>
-
       </nav>
       <div className="px-3 py-4 border-t border-white/10">
         <div className="flex items-center justify-center gap-4 mb-4">
@@ -127,6 +112,14 @@ export default function Sidebar({ label }: { label: string }) {
           <span className="pulse-dot" />
           <p className="text-xs text-white/40 truncate">{label}</p>
         </div>
+        {isAdmin && (
+          <NavLink
+            href="/dashboard/configuracoes"
+            label="Configurações"
+            icon={IconSettings}
+            active={!!isActive("/dashboard/configuracoes")}
+          />
+        )}
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"

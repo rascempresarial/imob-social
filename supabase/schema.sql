@@ -17,6 +17,7 @@ create table access_keys (
   label text not null,
   key text not null unique,
   active boolean not null default true,
+  is_admin boolean not null default false,
   created_at timestamptz not null default now(),
   last_used_at timestamptz
 );
@@ -55,7 +56,7 @@ create trigger imoveis_set_updated_at
 
 -- ── Posts (calendário editorial) ─────────────────────────────────────────
 create type post_tipo as enum ('feed', 'reels', 'story');
-create type post_status as enum ('rascunho', 'em_revisao', 'aprovado', 'reprovado', 'agendado', 'publicado');
+create type post_status as enum ('em_revisao', 'aprovado', 'reprovado', 'agendado', 'publicado');
 create type post_rede as enum ('instagram_facebook', 'linkedin', 'youtube', 'blog');
 
 create table posts (
@@ -67,7 +68,7 @@ create table posts (
   copy text,
   data_publicacao timestamptz,
   anunciado boolean not null default false,
-  status post_status not null default 'rascunho',
+  status post_status not null default 'em_revisao',
   aprovado_por text,
   aprovado_em timestamptz,
   motivo_reprovacao text,
@@ -88,22 +89,6 @@ create index posts_status_idx on posts (status);
 create trigger posts_set_updated_at
   before update on posts
   for each row execute function set_updated_at();
-
--- ── Mídias (fotos/vídeos vinculados a imóvel e/ou post) ──────────────────
-create type midia_tipo as enum ('foto', 'video');
-
-create table midias (
-  id uuid primary key default gen_random_uuid(),
-  imovel_id uuid references imoveis(id) on delete cascade,
-  post_id uuid references posts(id) on delete set null,
-  tipo midia_tipo not null,
-  storage_path text not null,
-  nome_arquivo text,
-  created_at timestamptz not null default now()
-);
-alter table midias enable row level security;
-
-create index midias_imovel_id_idx on midias (imovel_id);
 
 -- ── Notas ─────────────────────────────────────────────────────────────────
 create table notas (
@@ -134,12 +119,5 @@ alter table audit_log enable row level security;
 
 create index audit_log_created_at_idx on audit_log (created_at desc);
 
--- ── Storage: bucket privado para mídia dos imóveis ───────────────────────
--- Rode isso uma vez (ou crie o bucket pela UI do Supabase: Storage > New bucket,
--- nome "midia-imoveis", marcado como privado / Public = false).
-insert into storage.buckets (id, name, public)
-values ('midia-imoveis', 'midia-imoveis', false)
-on conflict (id) do nothing;
-
--- ── Seed opcional: cadastre sua primeira chave de acesso ─────────────────
--- insert into access_keys (label, key) values ('Seu Nome', 'TROQUE-ESTA-CHAVE');
+-- ── Seed opcional: cadastre sua primeira chave de acesso (como admin) ────
+-- insert into access_keys (label, key, is_admin) values ('Seu Nome', 'TROQUE-ESTA-CHAVE', true);
