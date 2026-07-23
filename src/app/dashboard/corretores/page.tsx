@@ -87,13 +87,13 @@ export default function CorretoresPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {loading &&
-          Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-square rounded-xl" />)}
+          Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-36 rounded-xl" />)}
         {!loading && corretores.length === 0 && (
           <p className="col-span-full text-sm text-navy-400 py-8 text-center">Nenhum corretor cadastrado ainda.</p>
         )}
         {!loading &&
           corretores.map((c) => (
-            <div key={c.id} className="aspect-square rounded-xl border border-navy-100 bg-white p-4 flex flex-col">
+            <div key={c.id} className="h-36 rounded-xl border border-navy-100 bg-white p-4 flex flex-col">
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-medium text-navy-900 leading-snug">{c.nome}</p>
                 <button
