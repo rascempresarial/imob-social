@@ -21,6 +21,11 @@ export interface Corretor {
   created_at: string;
 }
 
+export interface CorretorComStats extends Corretor {
+  imoveis_count: number;
+  anuncios_rodando: number;
+}
+
 export interface Imovel {
   id: string;
   codigo: string;
@@ -30,8 +35,11 @@ export interface Imovel {
   endereco: string | null;
   valor: number | null;
   link_site: string | null;
+  corretor_id: string | null;
   created_at: string;
   updated_at: string;
+  // preenchido via join na listagem
+  corretor?: Pick<Corretor, "id" | "nome"> | null;
 }
 
 export interface Post {

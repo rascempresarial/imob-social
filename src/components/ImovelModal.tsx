@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import Field from "./Field";
-import { Imovel, IMOVEL_STATUSES } from "@/lib/types";
+import { Corretor, Imovel, IMOVEL_STATUSES } from "@/lib/types";
 import { useToast } from "./UIProvider";
 
 type Draft = Partial<Imovel>;
@@ -19,9 +19,14 @@ export default function ImovelModal({
 }) {
   const editing = !!initial;
   const [draft, setDraft] = useState<Draft>(initial ?? { status: "disponivel" });
+  const [corretores, setCorretores] = useState<Corretor[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
+
+  useEffect(() => {
+    fetch("/api/corretores").then((r) => r.json()).then((d) => setCorretores(d.data ?? []));
+  }, []);
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -84,9 +89,25 @@ export default function ImovelModal({
             required
           />
         </Field>
-        <Field label="Edifício">
-          <input className="inp" value={draft.edificio ?? ""} onChange={(e) => set("edificio", e.target.value)} />
-        </Field>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Edifício">
+            <input className="inp" value={draft.edificio ?? ""} onChange={(e) => set("edificio", e.target.value)} />
+          </Field>
+          <Field label="Corretor">
+            <select
+              className="inp"
+              value={draft.corretor_id ?? ""}
+              onChange={(e) => set("corretor_id", e.target.value || null)}
+            >
+              <option value="">Sem corretor</option>
+              {corretores.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
         <Field label="Endereço">
           <input className="inp" value={draft.endereco ?? ""} onChange={(e) => set("endereco", e.target.value)} />
         </Field>

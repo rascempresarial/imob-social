@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   let query = getSupabaseAdmin()
     .from("imoveis")
-    .select("*", page ? { count: "exact" } : undefined)
+    .select("*, corretor:corretores(id, nome)", page ? { count: "exact" } : undefined)
     .order("created_at", { ascending: false });
 
   if (page) {
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
       endereco: body?.endereco || null,
       valor: body?.valor ? Number(body.valor) : null,
       link_site: body?.link_site || null,
+      corretor_id: body?.corretor_id || null,
     })
     .select()
     .single();

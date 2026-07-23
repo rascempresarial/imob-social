@@ -1,14 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Corretor } from "@/lib/types";
+import { CorretorComStats } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import { IconUsers } from "@/components/icons";
-import { SkeletonTableRows } from "@/components/Skeleton";
+import { Skeleton } from "@/components/Skeleton";
 import { useConfirm, useToast } from "@/components/UIProvider";
 
 export default function CorretoresPage() {
-  const [corretores, setCorretores] = useState<Corretor[]>([]);
+  const [corretores, setCorretores] = useState<CorretorComStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -47,7 +47,7 @@ export default function CorretoresPage() {
     }
   }
 
-  async function toggleAtivo(c: Corretor) {
+  async function toggleAtivo(c: CorretorComStats) {
     await fetch(`/api/corretores/${c.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -59,7 +59,7 @@ export default function CorretoresPage() {
   async function handleDelete(id: string) {
     const ok = await confirmDialog({
       title: "Excluir corretor",
-      message: "Excluir este corretor? Posts vinculados ficarão sem corretor associado.",
+      message: "Excluir este corretor? Imóveis vinculados ficarão sem corretor associado.",
       confirmLabel: "Excluir",
       danger: true,
     });
@@ -71,7 +71,7 @@ export default function CorretoresPage() {
 
   return (
     <div>
-      <PageHeader icon={<IconUsers className="w-full h-full" />} title="Corretores" subtitle="Equipe vinculada aos posts" />
+      <PageHeader icon={<IconUsers className="w-full h-full" />} title="Corretores" subtitle="Imóveis e anúncios rodando por corretor" />
 
       <form onSubmit={handleAdd} className="flex gap-3 mb-6 max-w-xl">
         <input className="inp" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
@@ -85,48 +85,45 @@ export default function CorretoresPage() {
         </button>
       </form>
 
-      <div className="rounded-xl border border-navy-100 bg-white overflow-hidden max-w-xl">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-navy-100 text-left text-navy-500">
-              <th className="px-4 py-3 font-medium">Nome</th>
-              <th className="px-4 py-3 font-medium">Telefone</th>
-              <th className="px-4 py-3 font-medium">Ativo</th>
-              <th className="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading && <SkeletonTableRows cols={4} />}
-            {!loading && corretores.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-navy-400">
-                  Nenhum corretor cadastrado ainda.
-                </td>
-              </tr>
-            )}
-            {!loading && corretores.map((c) => (
-              <tr key={c.id} className="border-b border-navy-100 last:border-0">
-                <td className="px-4 py-3 text-navy-900">{c.nome}</td>
-                <td className="px-4 py-3 text-navy-600">{c.telefone ?? "·"}</td>
-                <td className="px-4 py-3">
-                  <button
-                    onClick={() => toggleAtivo(c)}
-                    className={`text-xs rounded-full px-2.5 py-0.5 font-medium ${
-                      c.ativo ? "bg-green-100 text-green-700" : "bg-navy-100 text-navy-500"
-                    }`}
-                  >
-                    {c.ativo ? "Ativo" : "Inativo"}
-                  </button>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button onClick={() => handleDelete(c.id)} className="text-red-600 hover:text-red-800 text-xs font-medium">
-                    Excluir
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {loading &&
+          Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-square rounded-xl" />)}
+        {!loading && corretores.length === 0 && (
+          <p className="col-span-full text-sm text-navy-400 py-8 text-center">Nenhum corretor cadastrado ainda.</p>
+        )}
+        {!loading &&
+          corretores.map((c) => (
+            <div key={c.id} className="aspect-square rounded-xl border border-navy-100 bg-white p-4 flex flex-col">
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-medium text-navy-900 leading-snug">{c.nome}</p>
+                <button
+                  onClick={() => handleDelete(c.id)}
+                  className="text-navy-300 hover:text-red-600 text-[11px] shrink-0"
+                >
+                  Excluir
+                </button>
+              </div>
+              {c.telefone && <p className="text-xs text-navy-500 mt-1">{c.telefone}</p>}
+              <button
+                onClick={() => toggleAtivo(c)}
+                className={`self-start mt-2 text-[11px] rounded-full px-2 py-0.5 font-medium ${
+                  c.ativo ? "bg-green-100 text-green-700" : "bg-navy-100 text-navy-500"
+                }`}
+              >
+                {c.ativo ? "Ativo" : "Inativo"}
+              </button>
+              <div className="mt-auto pt-3 border-t border-navy-100 space-y-1.5">
+                <div className="flex items-center justify-between text-xs text-navy-600">
+                  <span>Imóveis cadastrados</span>
+                  <span className="font-semibold text-navy-900">{c.imoveis_count}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-navy-600">
+                  <span>Anúncios rodando</span>
+                  <span className="font-semibold text-navy-900">{c.anuncios_rodando}</span>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );

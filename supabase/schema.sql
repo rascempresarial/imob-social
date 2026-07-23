@@ -45,6 +45,7 @@ create table imoveis (
   endereco text,
   valor numeric,
   link_site text,
+  corretor_id uuid references corretores(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
