@@ -9,11 +9,14 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const page = searchParams.get("page") ? Number(searchParams.get("page")) : null;
   const pageSize = Number(searchParams.get("pageSize") || 20);
+  const corretorId = searchParams.get("corretor_id");
 
   let query = getSupabaseAdmin()
     .from("imoveis")
     .select("*, corretor:corretores(id, nome)", page ? { count: "exact" } : undefined)
     .order("created_at", { ascending: false });
+
+  if (corretorId) query = query.eq("corretor_id", corretorId);
 
   if (page) {
     const start = (page - 1) * pageSize;

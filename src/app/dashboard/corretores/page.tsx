@@ -6,6 +6,7 @@ import PageHeader from "@/components/PageHeader";
 import { IconUsers } from "@/components/icons";
 import { Skeleton } from "@/components/Skeleton";
 import { useConfirm, useToast } from "@/components/UIProvider";
+import CorretorImoveisModal from "@/components/CorretorImoveisModal";
 
 export default function CorretoresPage() {
   const [corretores, setCorretores] = useState<CorretorComStats[]>([]);
@@ -13,6 +14,7 @@ export default function CorretoresPage() {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [saving, setSaving] = useState(false);
+  const [selected, setSelected] = useState<CorretorComStats | null>(null);
   const confirmDialog = useConfirm();
   const toast = useToast();
 
@@ -93,11 +95,18 @@ export default function CorretoresPage() {
         )}
         {!loading &&
           corretores.map((c) => (
-            <div key={c.id} className="h-36 rounded-xl border border-navy-100 bg-white p-4 flex flex-col">
+            <div
+              key={c.id}
+              onClick={() => setSelected(c)}
+              className="h-36 rounded-xl border border-navy-100 bg-white p-4 flex flex-col cursor-pointer hover:border-navy-300 transition-colors"
+            >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-medium text-navy-900 leading-snug">{c.nome}</p>
                 <button
-                  onClick={() => handleDelete(c.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(c.id);
+                  }}
                   className="text-navy-300 hover:text-red-600 text-[11px] shrink-0"
                 >
                   Excluir
@@ -105,7 +114,10 @@ export default function CorretoresPage() {
               </div>
               {c.telefone && <p className="text-xs text-navy-500 mt-1">{c.telefone}</p>}
               <button
-                onClick={() => toggleAtivo(c)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleAtivo(c);
+                }}
                 className={`self-start mt-2 text-[11px] rounded-full px-2 py-0.5 font-medium ${
                   c.ativo ? "bg-green-100 text-green-700" : "bg-navy-100 text-navy-500"
                 }`}
@@ -125,6 +137,15 @@ export default function CorretoresPage() {
             </div>
           ))}
       </div>
+
+      {selected && (
+        <CorretorImoveisModal
+          corretorId={selected.id}
+          corretorNome={selected.nome}
+          onClose={() => setSelected(null)}
+          onChange={load}
+        />
+      )}
     </div>
   );
 }
