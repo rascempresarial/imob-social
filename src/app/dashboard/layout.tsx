@@ -12,7 +12,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <UIProvider>
       <div className="flex min-h-screen bg-paper">
         <Sidebar label={session.label} isAdmin={session.isAdmin} />
-        <main className="flex-1 p-8 max-w-6xl">{children}</main>
+        <main className="flex-1 p-8 max-w-6xl mx-auto w-full">{children}</main>
       </div>
       <CommandPalette isAdmin={session.isAdmin} />
     </UIProvider>
