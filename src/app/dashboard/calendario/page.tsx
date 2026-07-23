@@ -1,9 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Post, postRedeMeta, postStatusMeta } from "@/lib/types";
+import { Post, PostRede, postRedeMeta, postStatusMeta } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
-import { IconCalendar, IconExternalLink } from "@/components/icons";
+import { IconCalendar, IconExternalLink, IconGlobe, IconInstagram, IconLinkedin, IconYoutube } from "@/components/icons";
+
+const REDE_ICONS: Record<PostRede, typeof IconInstagram> = {
+  instagram_facebook: IconInstagram,
+  linkedin: IconLinkedin,
+  youtube: IconYoutube,
+  blog: IconGlobe,
+};
 
 function ymd(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -112,14 +119,18 @@ export default function CalendarioPage() {
                   </div>
                   <div className="space-y-1">
                     {dayPosts.slice(0, 3).map((p) => {
-                      const meta = postStatusMeta(p.status);
+                      const rede = postRedeMeta(p.rede);
+                      const RedeIcon = REDE_ICONS[p.rede];
                       return (
                         <div
                           key={p.id}
-                          className="text-[11px] rounded px-1.5 py-0.5 truncate"
-                          style={{ backgroundColor: meta.color + "22", color: meta.color }}
+                          className="flex items-center gap-1 text-[11px] rounded px-1.5 py-0.5 truncate"
+                          style={{ backgroundColor: rede.color + "1A", color: rede.color }}
                         >
-                          {p.imovel?.codigo ?? "sem imóvel"} · {p.tipo}
+                          <RedeIcon className="w-3 h-3 shrink-0" />
+                          <span className="truncate">
+                            {p.imovel?.codigo ?? "sem imóvel"} · {p.tipo}
+                          </span>
                         </div>
                       );
                     })}
@@ -147,6 +158,8 @@ export default function CalendarioPage() {
               {selectedPosts.length === 0 && <p className="text-sm text-navy-400">Nenhum post neste dia.</p>}
               {selectedPosts.map((p) => {
                 const meta = postStatusMeta(p.status);
+                const rede = postRedeMeta(p.rede);
+                const RedeIcon = REDE_ICONS[p.rede];
                 return (
                   <div key={p.id} className="border border-navy-100 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-1">
@@ -155,8 +168,9 @@ export default function CalendarioPage() {
                         {meta.label}
                       </span>
                     </div>
-                    <div className="text-xs text-navy-500 capitalize">
-                      {p.tipo} · {postRedeMeta(p.rede).label}
+                    <div className="flex items-center gap-1 text-xs capitalize" style={{ color: rede.color }}>
+                      <RedeIcon className="w-3.5 h-3.5 shrink-0" />
+                      {p.tipo} · {rede.label}
                     </div>
                     <div className="flex items-center gap-3 mt-1.5 text-xs text-navy-500">
                       <span>Anunciado: {p.anunciado ? "Sim" : "Não"}</span>

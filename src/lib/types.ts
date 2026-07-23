@@ -109,11 +109,11 @@ export const POST_TIPOS: { value: PostTipo; label: string }[] = [
   { value: "story", label: "Story" },
 ];
 
-export const POST_REDES: { value: PostRede; label: string }[] = [
-  { value: "instagram_facebook", label: "Instagram/Facebook" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "youtube", label: "YouTube" },
-  { value: "blog", label: "Blog" },
+export const POST_REDES: { value: PostRede; label: string; color: string }[] = [
+  { value: "instagram_facebook", label: "Instagram/Facebook", color: "#8B3D97" },
+  { value: "linkedin", label: "LinkedIn", color: "#1D6FB8" },
+  { value: "youtube", label: "YouTube", color: "#C4291C" },
+  { value: "blog", label: "Blog", color: "#B2701E" },
 ];
 
 export function postRedeMeta(value: string) {

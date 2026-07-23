@@ -299,7 +299,14 @@ export default function PostsPage() {
                     const imovelIndisponivel = p.imovel && p.imovel.status !== "disponivel";
                     const hasMetrics = p.alcance != null || p.curtidas != null;
                     return (
-                      <tr key={p.id} className="border-b border-navy-100 last:border-0 align-top">
+                      <tr
+                        key={p.id}
+                        onClick={() => {
+                          setEditing(p);
+                          setModalOpen(true);
+                        }}
+                        className="border-b border-navy-100 last:border-0 align-top cursor-pointer hover:bg-navy-100/40"
+                      >
                         <td className="px-4 py-3">
                           <div className="text-navy-900">{p.imovel ? `${p.imovel.codigo}, ${p.imovel.titulo}` : "·"}</div>
                           {imovelIndisponivel && (
@@ -343,7 +350,7 @@ export default function PostsPage() {
                         <td className="px-4 py-3">
                           <Badge label={meta.label} color={meta.color} />
                         </td>
-                        <td className="px-4 py-3 text-right whitespace-nowrap space-x-2">
+                        <td className="px-4 py-3 text-right whitespace-nowrap space-x-2" onClick={(e) => e.stopPropagation()}>
                           {p.status === "em_revisao" && (
                             <>
                               <button onClick={() => setStatus(p.id, "aprovado")} className="text-green-700 hover:text-green-900 text-xs font-medium">
