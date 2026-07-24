@@ -147,7 +147,7 @@ export default function PlanejamentoRedePage() {
       {!loadingMetricas && metricasPorNome.size > 0 && (
         <div className="mb-8">
           <h2 className="text-sm font-semibold text-navy-900 mb-3">Métricas</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {Array.from(metricasPorNome.entries()).map(([nome, serie]) => (
               <MetricChart key={nome} metrica={nome} data={serie} />
             ))}

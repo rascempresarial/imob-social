@@ -1,6 +1,6 @@
-const WIDTH = 280;
-const HEIGHT = 64;
-const PAD = 8;
+const WIDTH = 200;
+const HEIGHT = 40;
+const PAD = 6;
 
 function fmtMes(mes: string) {
   return new Date(mes + "T00:00:00").toLocaleDateString("pt-BR", { month: "short" }).replace(".", "");
@@ -31,12 +31,12 @@ export default function MetricChart({ metrica, data }: { metrica: string; data: 
   const delta = previous ? ((latest.valor - previous.valor) / (previous.valor || 1)) * 100 : null;
 
   return (
-    <div className="rounded-xl border border-navy-100 bg-white p-4">
-      <div className="flex items-start justify-between mb-1">
-        <p className="text-xs font-medium text-navy-500">{metrica}</p>
+    <div className="rounded-xl border border-navy-100 bg-white p-3">
+      <div className="flex items-start justify-between mb-0.5">
+        <p className="text-[11px] font-medium text-navy-500 truncate">{metrica}</p>
         {delta !== null && (
           <span
-            className={`text-[11px] rounded-full px-2 py-0.5 font-medium shrink-0 ${
+            className={`text-[10px] rounded-full px-1.5 py-0.5 font-medium shrink-0 ${
               delta > 0 ? "bg-green-100 text-green-700" : delta < 0 ? "bg-red-100 text-red-700" : "bg-navy-100 text-navy-500"
             }`}
           >
@@ -45,14 +45,14 @@ export default function MetricChart({ metrica, data }: { metrica: string; data: 
           </span>
         )}
       </div>
-      <p className="text-2xl font-semibold text-navy-900 mb-2">{fmtValor(latest.valor)}</p>
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full h-16">
+      <p className="text-lg font-semibold text-navy-900 mb-1">{fmtValor(latest.valor)}</p>
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full h-9">
         <path d={pathD} fill="none" stroke="#173262" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
         {points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r={2} fill="#173262" />
+          <circle key={i} cx={p.x} cy={p.y} r={1.6} fill="#173262" />
         ))}
       </svg>
-      <div className="flex justify-between text-[10px] text-navy-400 mt-1">
+      <div className="flex justify-between text-[9px] text-navy-400 mt-0.5">
         <span>{fmtMes(data[0].mes)}</span>
         {data.length > 1 && <span>{fmtMes(data[data.length - 1].mes)}</span>}
       </div>
