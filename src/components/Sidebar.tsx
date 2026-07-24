@@ -14,6 +14,7 @@ import {
   IconNote,
   IconSearch,
   IconSettings,
+  IconTarget,
   IconUsers,
   IconYoutube,
 } from "./icons";
@@ -28,6 +29,12 @@ const NAV = [
 const CADASTROS = [
   { href: "/dashboard/imoveis", label: "Imóveis", icon: IconBuilding },
   { href: "/dashboard/corretores", label: "Corretores", icon: IconUsers },
+];
+
+const PLANEJAMENTO = [
+  { href: "/dashboard/planejamento/instagram", label: "Instagram", icon: IconInstagram },
+  { href: "/dashboard/planejamento/linkedin", label: "LinkedIn", icon: IconLinkedin },
+  { href: "/dashboard/planejamento/meta-ads", label: "Meta ADS", icon: IconTarget },
 ];
 
 const SOCIAL_LINKS = [
@@ -92,6 +99,15 @@ export default function Sidebar({ label, isAdmin }: { label: string; isAdmin: bo
           <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-white/35">Cadastros</p>
           <div className="space-y-1">
             {CADASTROS.map((item) => (
+              <NavLink key={item.href} {...item} active={!!isActive(item.href)} />
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-4 mt-3 border-t border-white/10">
+          <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-white/35">Planejamento</p>
+          <div className="space-y-1">
+            {PLANEJAMENTO.map((item) => (
               <NavLink key={item.href} {...item} active={!!isActive(item.href)} />
             ))}
           </div>

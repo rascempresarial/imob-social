@@ -68,6 +68,12 @@ export interface Post {
   imovel?: Pick<Imovel, "id" | "codigo" | "titulo" | "status"> | null;
 }
 
+export interface Planejamento {
+  rede: string;
+  conteudo: string;
+  updated_at: string;
+}
+
 export interface Nota {
   id: string;
   titulo: string | null;

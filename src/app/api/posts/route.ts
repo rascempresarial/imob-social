@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
   const to = searchParams.get("to");
   const imovelId = searchParams.get("imovel_id");
   const rede = searchParams.get("rede");
+  const anunciado = searchParams.get("anunciado");
   const q = searchParams.get("q");
   const page = searchParams.get("page") ? Number(searchParams.get("page")) : null;
   const pageSize = Number(searchParams.get("pageSize") || 20);
@@ -29,6 +30,7 @@ export async function GET(req: NextRequest) {
   if (to) query = query.lte("data_publicacao", to);
   if (imovelId) query = query.eq("imovel_id", imovelId);
   if (rede) query = query.eq("rede", rede);
+  if (anunciado === "true") query = query.eq("anunciado", true);
   if (q) query = query.ilike("copy", `%${q}%`);
   if (page) {
     const start = (page - 1) * pageSize;

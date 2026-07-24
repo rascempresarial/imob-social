@@ -109,6 +109,18 @@ create trigger notas_set_updated_at
   before update on notas
   for each row execute function set_updated_at();
 
+-- ── Planejamento por rede (Instagram, LinkedIn, Meta ADS...) ─────────────
+create table planejamentos (
+  rede text primary key,
+  conteudo text not null default '',
+  updated_at timestamptz not null default now()
+);
+alter table planejamentos enable row level security;
+
+create trigger planejamentos_set_updated_at
+  before update on planejamentos
+  for each row execute function set_updated_at();
+
 -- ── Log de auditoria (histórico de ações em posts) ───────────────────────
 create table audit_log (
   id uuid primary key default gen_random_uuid(),

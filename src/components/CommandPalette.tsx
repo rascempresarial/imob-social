@@ -7,11 +7,14 @@ import {
   IconCalendar,
   IconHistory,
   IconHome,
+  IconInstagram,
   IconKey,
   IconLayers,
+  IconLinkedin,
   IconNote,
   IconPlus,
   IconSettings,
+  IconTarget,
   IconUsers,
 } from "./icons";
 
@@ -30,6 +33,9 @@ const COMMANDS: Command[] = [
   { id: "nav-imoveis", label: "Imóveis", group: "Navegar", href: "/dashboard/imoveis", icon: <IconBuilding className="w-4 h-4" /> },
   { id: "nav-corretores", label: "Corretores", group: "Navegar", href: "/dashboard/corretores", icon: <IconUsers className="w-4 h-4" /> },
   { id: "nav-notas", label: "Notas", group: "Navegar", href: "/dashboard/notas", icon: <IconNote className="w-4 h-4" /> },
+  { id: "nav-planejamento-instagram", label: "Planejamento Instagram", group: "Navegar", href: "/dashboard/planejamento/instagram", icon: <IconInstagram className="w-4 h-4" /> },
+  { id: "nav-planejamento-linkedin", label: "Planejamento LinkedIn", group: "Navegar", href: "/dashboard/planejamento/linkedin", icon: <IconLinkedin className="w-4 h-4" /> },
+  { id: "nav-planejamento-meta-ads", label: "Planejamento Meta ADS", group: "Navegar", href: "/dashboard/planejamento/meta-ads", icon: <IconTarget className="w-4 h-4" /> },
   { id: "new-post", label: "Novo post", group: "Criar", href: "/dashboard/posts?action=new", icon: <IconPlus className="w-4 h-4" /> },
   { id: "new-imovel", label: "Novo imóvel", group: "Criar", href: "/dashboard/imoveis?action=new", icon: <IconPlus className="w-4 h-4" /> },
 ];
