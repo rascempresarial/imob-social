@@ -301,3 +301,21 @@ export function IconChart({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconCopy({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="9" y="9" width="12" height="12" rx="1.5" />
+      <path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6" />
+    </svg>
+  );
+}
+
+export function IconFilm({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2.5" y="4.5" width="19" height="15" rx="1.5" />
+      <path d="M8 4.5v15M16 4.5v15M2.5 9h5.5M16 9h5.5M2.5 15h5.5M16 15h5.5" />
+    </svg>
+  );
+}

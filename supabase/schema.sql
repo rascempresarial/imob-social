@@ -140,6 +140,42 @@ create trigger rede_metricas_set_updated_at
   before update on rede_metricas
   for each row execute function set_updated_at();
 
+-- ── Modelos de copy/legenda por rede ──────────────────────────────────────
+create table copy_templates (
+  id uuid primary key default gen_random_uuid(),
+  rede text not null,
+  titulo text not null,
+  texto text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table copy_templates enable row level security;
+
+create index copy_templates_rede_idx on copy_templates (rede);
+
+create trigger copy_templates_set_updated_at
+  before update on copy_templates
+  for each row execute function set_updated_at();
+
+-- ── Roteiros de vídeo/Reels por rede ──────────────────────────────────────
+create table roteiros (
+  id uuid primary key default gen_random_uuid(),
+  rede text not null,
+  titulo text not null,
+  gancho text,
+  desenvolvimento text,
+  cta text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table roteiros enable row level security;
+
+create index roteiros_rede_idx on roteiros (rede);
+
+create trigger roteiros_set_updated_at
+  before update on roteiros
+  for each row execute function set_updated_at();
+
 -- ── Log de auditoria (histórico de ações em posts) ───────────────────────
 create table audit_log (
   id uuid primary key default gen_random_uuid(),

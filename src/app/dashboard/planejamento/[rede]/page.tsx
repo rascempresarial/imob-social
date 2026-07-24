@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Post, RedeMetrica, postRedeMeta, postStatusMeta } from "@/lib/types";
+import { Post, RedeMetrica, Roteiro, postRedeMeta, postStatusMeta } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import Badge from "@/components/Badge";
 import MetricChart from "@/components/MetricChart";
-import { IconEye, IconHeart, IconInstagram, IconLinkedin, IconTarget } from "@/components/icons";
+import CopyTemplatesModal from "@/components/CopyTemplatesModal";
+import { IconCopy, IconEye, IconFilm, IconHeart, IconInstagram, IconLinkedin, IconTarget } from "@/components/icons";
 import { Skeleton } from "@/components/Skeleton";
-import { useToast } from "@/components/UIProvider";
+import { useConfirm, useToast } from "@/components/UIProvider";
 
 const CONFIG: Record<
   string,
@@ -47,6 +48,16 @@ export default function PlanejamentoRedePage() {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [metricas, setMetricas] = useState<RedeMetrica[]>([]);
   const [loadingMetricas, setLoadingMetricas] = useState(true);
+  const [roteiros, setRoteiros] = useState<Roteiro[]>([]);
+  const [loadingRoteiros, setLoadingRoteiros] = useState(true);
+  const [showCopyModal, setShowCopyModal] = useState(false);
+  const [showRoteiroForm, setShowRoteiroForm] = useState(false);
+  const [rTitulo, setRTitulo] = useState("");
+  const [rGancho, setRGancho] = useState("");
+  const [rDesenvolvimento, setRDesenvolvimento] = useState("");
+  const [rCta, setRCta] = useState("");
+  const [savingRoteiro, setSavingRoteiro] = useState(false);
+  const confirmDialog = useConfirm();
   const toast = useToast();
 
   const loadTexto = useCallback(async () => {
@@ -77,11 +88,51 @@ export default function PlanejamentoRedePage() {
     setLoadingMetricas(false);
   }, [rede, config]);
 
+  const loadRoteiros = useCallback(async () => {
+    if (!config) return;
+    setLoadingRoteiros(true);
+    const res = await fetch(`/api/roteiros?rede=${rede}`);
+    const data = await res.json();
+    setRoteiros(data.data ?? []);
+    setLoadingRoteiros(false);
+  }, [rede, config]);
+
   useEffect(() => {
     loadTexto();
     loadPosts();
     loadMetricas();
-  }, [loadTexto, loadPosts, loadMetricas]);
+    loadRoteiros();
+  }, [loadTexto, loadPosts, loadMetricas, loadRoteiros]);
+
+  async function handleAddRoteiro(e: React.FormEvent) {
+    e.preventDefault();
+    if (!rTitulo.trim()) return;
+    setSavingRoteiro(true);
+    try {
+      await fetch("/api/roteiros", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rede, titulo: rTitulo, gancho: rGancho, desenvolvimento: rDesenvolvimento, cta: rCta }),
+      });
+      setRTitulo("");
+      setRGancho("");
+      setRDesenvolvimento("");
+      setRCta("");
+      setShowRoteiroForm(false);
+      toast("Roteiro salvo.", "success");
+      loadRoteiros();
+    } finally {
+      setSavingRoteiro(false);
+    }
+  }
+
+  async function handleDeleteRoteiro(id: string) {
+    const ok = await confirmDialog({ title: "Excluir roteiro", message: "Excluir este roteiro?", confirmLabel: "Excluir", danger: true });
+    if (!ok) return;
+    await fetch(`/api/roteiros/${id}`, { method: "DELETE" });
+    toast("Roteiro excluído.", "success");
+    loadRoteiros();
+  }
 
   async function handleSalvar() {
     setSaving(true);
@@ -115,7 +166,20 @@ export default function PlanejamentoRedePage() {
 
   return (
     <div>
-      <PageHeader icon={<config.icon className="w-full h-full" />} title={config.label} subtitle={config.subtitle} />
+      <PageHeader
+        icon={<config.icon className="w-full h-full" />}
+        title={config.label}
+        subtitle={config.subtitle}
+        action={
+          <button
+            onClick={() => setShowCopyModal(true)}
+            className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-navy-200 text-navy-700 hover:bg-navy-100"
+          >
+            <IconCopy className="w-4 h-4" />
+            Modelos de copy
+          </button>
+        }
+      />
 
       <div className="rounded-xl border border-navy-100 bg-white p-4 mb-8">
         <div className="flex items-center justify-between mb-2">
@@ -142,6 +206,78 @@ export default function PlanejamentoRedePage() {
             {saving ? "Salvando..." : "Salvar"}
           </button>
         </div>
+      </div>
+
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-navy-900 flex items-center gap-1.5">
+            <IconFilm className="w-4 h-4 text-navy-500" />
+            Roteiros de vídeo/Reels
+          </h2>
+          <button
+            onClick={() => setShowRoteiroForm((v) => !v)}
+            className="text-xs text-navy-600 hover:text-navy-900 font-medium"
+          >
+            {showRoteiroForm ? "Cancelar" : "+ Novo roteiro"}
+          </button>
+        </div>
+
+        {showRoteiroForm && (
+          <form onSubmit={handleAddRoteiro} className="rounded-xl border border-navy-100 bg-white p-4 mb-4 space-y-3">
+            <input className="inp" placeholder="Título do roteiro" value={rTitulo} onChange={(e) => setRTitulo(e.target.value)} />
+            <textarea className="inp" rows={2} placeholder="Gancho (primeiros segundos)" value={rGancho} onChange={(e) => setRGancho(e.target.value)} />
+            <textarea className="inp" rows={3} placeholder="Desenvolvimento" value={rDesenvolvimento} onChange={(e) => setRDesenvolvimento(e.target.value)} />
+            <textarea className="inp" rows={2} placeholder="CTA (chamada final)" value={rCta} onChange={(e) => setRCta(e.target.value)} />
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={savingRoteiro || !rTitulo.trim()}
+                className="px-4 py-2 text-sm rounded-lg bg-navy-800 text-white hover:bg-navy-700 disabled:opacity-50"
+              >
+                {savingRoteiro ? "Salvando..." : "Salvar roteiro"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {loadingRoteiros && <Skeleton className="h-24 w-full" />}
+        {!loadingRoteiros && roteiros.length === 0 && !showRoteiroForm && (
+          <p className="text-sm text-navy-400">Nenhum roteiro cadastrado ainda.</p>
+        )}
+        {!loadingRoteiros && roteiros.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {roteiros.map((r) => (
+              <div key={r.id} className="rounded-xl border border-navy-100 bg-white p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <p className="text-sm font-medium text-navy-900">{r.titulo}</p>
+                  <button onClick={() => handleDeleteRoteiro(r.id)} className="text-xs text-red-600 hover:text-red-800 shrink-0">
+                    Excluir
+                  </button>
+                </div>
+                <div className="space-y-1.5 text-xs text-navy-600">
+                  {r.gancho && (
+                    <p>
+                      <span className="font-medium text-navy-800">Gancho: </span>
+                      {r.gancho}
+                    </p>
+                  )}
+                  {r.desenvolvimento && (
+                    <p>
+                      <span className="font-medium text-navy-800">Desenvolvimento: </span>
+                      {r.desenvolvimento}
+                    </p>
+                  )}
+                  {r.cta && (
+                    <p>
+                      <span className="font-medium text-navy-800">CTA: </span>
+                      {r.cta}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {!loadingMetricas && metricasPorNome.size > 0 && (
@@ -224,6 +360,8 @@ export default function PlanejamentoRedePage() {
           </tbody>
         </table>
       </div>
+
+      {showCopyModal && <CopyTemplatesModal rede={rede} onClose={() => setShowCopyModal(false)} />}
     </div>
   );
 }

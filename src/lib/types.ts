@@ -84,6 +84,26 @@ export interface RedeMetrica {
   updated_at: string;
 }
 
+export interface CopyTemplate {
+  id: string;
+  rede: string;
+  titulo: string;
+  texto: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Roteiro {
+  id: string;
+  rede: string;
+  titulo: string;
+  gancho: string | null;
+  desenvolvimento: string | null;
+  cta: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Nota {
   id: string;
   titulo: string | null;
