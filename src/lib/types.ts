@@ -74,6 +74,16 @@ export interface Planejamento {
   updated_at: string;
 }
 
+export interface RedeMetrica {
+  id: string;
+  rede: string;
+  mes: string;
+  metrica: string;
+  valor: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Nota {
   id: string;
   titulo: string | null;

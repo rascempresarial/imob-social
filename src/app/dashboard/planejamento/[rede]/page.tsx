@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Post, postRedeMeta, postStatusMeta } from "@/lib/types";
+import { Post, RedeMetrica, postRedeMeta, postStatusMeta } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import Badge from "@/components/Badge";
+import MetricChart from "@/components/MetricChart";
 import { IconEye, IconHeart, IconInstagram, IconLinkedin, IconTarget } from "@/components/icons";
 import { Skeleton } from "@/components/Skeleton";
 import { useToast } from "@/components/UIProvider";
@@ -44,6 +45,8 @@ export default function PlanejamentoRedePage() {
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
+  const [metricas, setMetricas] = useState<RedeMetrica[]>([]);
+  const [loadingMetricas, setLoadingMetricas] = useState(true);
   const toast = useToast();
 
   const loadTexto = useCallback(async () => {
@@ -65,10 +68,20 @@ export default function PlanejamentoRedePage() {
     setLoadingPosts(false);
   }, [config]);
 
+  const loadMetricas = useCallback(async () => {
+    if (!config) return;
+    setLoadingMetricas(true);
+    const res = await fetch(`/api/metricas?rede=${rede}`);
+    const data = await res.json();
+    setMetricas(data.data ?? []);
+    setLoadingMetricas(false);
+  }, [rede, config]);
+
   useEffect(() => {
     loadTexto();
     loadPosts();
-  }, [loadTexto, loadPosts]);
+    loadMetricas();
+  }, [loadTexto, loadPosts, loadMetricas]);
 
   async function handleSalvar() {
     setSaving(true);
@@ -92,6 +105,12 @@ export default function PlanejamentoRedePage() {
         <PageHeader icon={<IconTarget className="w-full h-full" />} title="Planejamento" subtitle="Rede não encontrada" />
       </div>
     );
+  }
+
+  const metricasPorNome = new Map<string, { mes: string; valor: number }[]>();
+  for (const m of metricas) {
+    if (!metricasPorNome.has(m.metrica)) metricasPorNome.set(m.metrica, []);
+    metricasPorNome.get(m.metrica)!.push({ mes: m.mes, valor: m.valor });
   }
 
   return (
@@ -124,6 +143,17 @@ export default function PlanejamentoRedePage() {
           </button>
         </div>
       </div>
+
+      {!loadingMetricas && metricasPorNome.size > 0 && (
+        <div className="mb-8">
+          <h2 className="text-sm font-semibold text-navy-900 mb-3">Métricas</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from(metricasPorNome.entries()).map(([nome, serie]) => (
+              <MetricChart key={nome} metrica={nome} data={serie} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <h2 className="text-sm font-semibold text-navy-900 mb-3">Posts</h2>
       <div className="rounded-xl border border-navy-100 bg-white overflow-hidden">

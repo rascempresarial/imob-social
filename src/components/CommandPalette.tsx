@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   IconBuilding,
   IconCalendar,
+  IconChart,
   IconHistory,
   IconHome,
   IconInstagram,
@@ -44,6 +45,7 @@ const ADMIN_COMMANDS: Command[] = [
   { id: "nav-configuracoes", label: "Configurações", group: "Navegar", href: "/dashboard/configuracoes", icon: <IconSettings className="w-4 h-4" /> },
   { id: "nav-chaves", label: "Chaves de acesso", group: "Navegar", href: "/dashboard/configuracoes/chaves", icon: <IconKey className="w-4 h-4" /> },
   { id: "nav-auditoria", label: "Auditoria", group: "Navegar", href: "/dashboard/configuracoes/auditoria", icon: <IconHistory className="w-4 h-4" /> },
+  { id: "nav-metricas", label: "Métricas", group: "Navegar", href: "/dashboard/configuracoes/metricas", icon: <IconChart className="w-4 h-4" /> },
 ];
 
 export default function CommandPalette({ isAdmin }: { isAdmin: boolean }) {

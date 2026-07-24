@@ -1,6 +1,6 @@
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import { IconHistory, IconKey, IconSettings } from "@/components/icons";
+import { IconChart, IconHistory, IconKey, IconSettings } from "@/components/icons";
 
 const CARDS = [
   {
@@ -15,6 +15,12 @@ const CARDS = [
     subtitle: "Histórico de ações realizadas nos posts",
     icon: IconHistory,
   },
+  {
+    href: "/dashboard/configuracoes/metricas",
+    title: "Métricas",
+    subtitle: "Números manuais por rede (seguidores, curtidas, e mais)",
+    icon: IconChart,
+  },
 ];
 
 export default function ConfiguracoesPage() {
@@ -22,7 +28,7 @@ export default function ConfiguracoesPage() {
     <div>
       <PageHeader icon={<IconSettings className="w-full h-full" />} title="Configurações" subtitle="Área restrita ao administrador" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
         {CARDS.map((c) => (
           <Link
             key={c.href}

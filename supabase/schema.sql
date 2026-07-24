@@ -121,6 +121,25 @@ create trigger planejamentos_set_updated_at
   before update on planejamentos
   for each row execute function set_updated_at();
 
+-- ── Métricas por rede (preenchidas em Configurações) ─────────────────────
+create table rede_metricas (
+  id uuid primary key default gen_random_uuid(),
+  rede text not null,
+  mes date not null,
+  metrica text not null,
+  valor numeric not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (rede, mes, metrica)
+);
+alter table rede_metricas enable row level security;
+
+create index rede_metricas_rede_idx on rede_metricas (rede);
+
+create trigger rede_metricas_set_updated_at
+  before update on rede_metricas
+  for each row execute function set_updated_at();
+
 -- ── Log de auditoria (histórico de ações em posts) ───────────────────────
 create table audit_log (
   id uuid primary key default gen_random_uuid(),
